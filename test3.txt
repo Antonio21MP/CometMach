@@ -1,0 +1,7 @@
+int a, b;
+int c, d=1, e;
+int i=2, u=1;
+dec z=2.2, w;
+word ho="hola mundo", na="como estas", nw;
+symbol f='A', ds='C';
+bool t=true, f=false;

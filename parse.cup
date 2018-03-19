@@ -1,0 +1,63 @@
+package cometmach;
+import java_cup.runtime.*;
+
+
+terminal tTrue, tFalse, tIf, tAssign, tOr, tAnd, tComparative, tElseif, tElse, tSwap, tIs;
+terminal tThen, tClose, tDefault, tFor, tParOpen, tParClose, tTo, tEnd, tMain;
+terminal tDoCicle, tCicle, tBox, tBoxAssing, tFunction, tVoid, tReturn, tCommentary;
+terminal tInit, tInteger, tDecimal, tWord,  tSymbol, tBoolean, tLineEnd, tTab, tSpace;
+terminal tId, tStapleOpen, tStapleClose, tComma, tAdd, tSub, tMulti, tDiv, tEndSentence;
+terminal String tSentence, tNumber, tChar;
+
+non terminal nTYPES, T0;
+non terminal nINT, I0, I1, I2, I3;
+non terminal nSYM, S0, S1, S2;
+non terminal nWORD, W0, W1, W2;
+non terminal nDEC, D0, D1, D2;
+non terminal nBOOL, B0, B1, B2, B3;
+
+start with nTYPES;
+
+nTYPES ::= nINT tLineEnd T0 
+            | nDEC tLineEnd T0 
+            | nSYM tLineEnd T0 
+            | nWORD tLineEnd T0 
+            | nBOOL tLineEnd T0;
+T0 ::= nTYPES | ;
+
+nINT ::= tInteger I0 {: System.out.println("Integer Declaration Is Correct"); :};
+I0 ::= tSpace tId I1;
+I1 ::= I2;
+I1 ::= tAssign tNumber I2;
+I2 ::= tComma I0;
+I2 ::= tEndSentence;
+
+nDEC ::= tDecimal D0 {: System.out.println("Decimal Declaration Is Correct"); :};
+D0 ::= tSpace tId D1;
+D1 ::= D2;
+D1 ::= tAssign tNumber D2;
+D2 ::= tComma D0;
+D2 ::= tEndSentence;
+
+nSYM ::= tSymbol S0 {: System.out.println("Symbol Declaration Is Correct"); :};
+S0 ::= tSpace tId S1;
+S1 ::= S2;
+S1 ::= tAssign tChar S2;
+S2 ::= tComma S0;
+S2 ::= tEndSentence;
+
+nWORD ::= tWord W0 {: System.out.println("Word Declaration Is Correct"); :};
+W0 ::= tSpace tId W1;
+W1 ::= W2;
+W1 ::= tAssign tSentence W2;
+W2 ::= tComma W0;
+W2 ::= tEndSentence;
+
+nBOOL ::= tBoolean B0 {: System.out.println("Boolean Declaration Is correct"); :};
+B0 ::= tSpace tId B1;
+B1 ::= B3;
+B1 ::= tAssign B2;
+B2 ::= tTrue B3;
+B2 ::= tFalse B3;
+B3 ::= tComma B0;
+B3 ::= tEndSentence;

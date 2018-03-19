@@ -34,4 +34,5 @@ main(){
         var10[num]='A';
         num=num+1;
     }
+    %
 }
