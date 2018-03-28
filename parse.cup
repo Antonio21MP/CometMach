@@ -9,7 +9,7 @@ terminal tInit, tInteger, tDecimal, tWord,  tSymbol, tBoolean;
 terminal tId, tStapleOpen, tStapleClose, tComma, tAdd, tSub, tMulti, tDiv, tEndSentence;
 terminal String tSentence, tNumberI, tNumberD, tChar;
 
-non terminal nTypes, nTypes_Repeat;
+non terminal nTypes;
 non terminal nInt, nInt_Declaration_Mixed, nInt_Declaration_Mixed_E1, nInt_Declaration_Mixed_E2,
              nInt_Declaration_Mixed_E3, nInt_Declaration_Mixed_E4;
 non terminal nSym, nSym_Declaration_Mixed, nSym_Declaration_Mixed_E1, nSym_Declaration_Mixed_E2,
@@ -20,23 +20,32 @@ non terminal nDec, nDec_Declaration_Mixed, nDec_Declaration_Mixed_E1, nDec_Decla
              nDec_Declaration_Mixed_E3, nDec_Declaration_Mixed_E4;
 non terminal nBool, nBool_Declaration_Mixed, nBool_Declaration_Mixed_E1, nBool_Declaration_Mixed_E2,
              nBool_Declaration_Mixed_E3, nBool_Declaration_Mixed_E4, nBool_Declaration_Mixed_E5;
-non terminal nAssignation;
-non terminal nOpetations;
+non terminal nAssignation, nAssignation_E1, nAssignation_E2;
+non terminal nOperations, nOperations_E1,nOperations_E2,nOperations_E3;
 non terminal nIf;
 non terminal nElse;
 non terminal nElseif;
 non terminal nFor;
 non terminal nDoCicle;
 non terminal nCicle;
+non terminal nMain, nInside, nInside_Repeat;
 
-start with nTypes;
+precedence left tAdd, tSub;
+precedence left tMulti, tDiv;
 
-nTypes ::= nInt nTypes_Repeat 
-            | nDec nTypes_Repeat
-            | nWord nTypes_Repeat 
-            | nSym nTypes_Repeat
-            | nBool nTypes_Repeat;
-nTypes_Repeat ::= nTypes | ;
+start with nMain;
+
+nMain ::= tMain tParOpen tParClose tInit 
+{:System.out.println("---Main Begin---");:} nInside tEnd {:System.out.println("---Main End---");:};
+
+nInside ::= nTypes nInside_Repeat | nAssignation nInside_Repeat;
+
+nTypes ::= nInt 
+            | nDec 
+            | nWord  
+            | nSym 
+            | nBool;
+nInside_Repeat ::= nInside | ;
 
 nInt ::= nInt_Declaration_Mixed;
 nDec ::= nDec_Declaration_Mixed;
@@ -89,3 +98,25 @@ nBool_Declaration_Mixed_E3 ::= tAssign nBool_Declaration_Mixed_E2 {:System.out.p
                                 | nBool_Declaration_Mixed_E1{:System.out.println("---B3S---");:};
 nBool_Declaration_Mixed_E4 ::=  tId nBool_Declaration_Mixed_E3{:System.out.println("---B4---");:};
 nBool_Declaration_Mixed_E5 ::= tBoolean nBool_Declaration_Mixed_E4 {:System.out.println("---B5---");:};
+
+//Asignacion de cualquiera tipo
+
+nAssignation ::= nAssignation_E2;
+nAssignation_E1 ::= nOperations tEndSentence
+                    | tChar tEndSentence
+                    | tTrue tEndSentence
+                    | tFalse tEndSentence
+                    | tSentence tEndSentence;
+nAssignation_E2 ::= tId tAssign nAssignation_E1;
+//Operaciones
+nOperations ::= nOperations_E3;
+nOperations_E1 ::= tId 
+                    | tNumberI 
+                    | tNumberD
+                    |tParOpen nOperations_E3 tParClose;
+nOperations_E2 ::= nOperations_E2 tMulti nOperations_E1
+                    | nOperations_E2 tDiv nOperations_E1
+                    | nOperations_E1;
+nOperations_E3 ::= nOperations_E3 tAdd nOperations_E2 
+                    | nOperations_E3 tSub nOperations_E2
+                    | nOperations_E2;

@@ -1,3 +1,4 @@
+main(){
 int a, b;
 int c, d=1, e;
 int i=2, u=1;
@@ -10,3 +11,10 @@ word wr3, wr2="adios";
 bool fr = false, fr1 = true;
 bool fr2 = true, fr3;
 bool fr4, fr5=false;
+
+n = 44;
+d = 3.4;
+de = d + x + 32 + 11;
+c = c - 1 + 2 * 3;
+x = 4 / (3+2) * 2;
+}
