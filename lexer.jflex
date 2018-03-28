@@ -15,7 +15,8 @@ import java_cup.runtime.Symbol;
 Words = [a-zA-Z]
 Digits = [0-9]
 Id = {Words}+{Digits}* 
-Number = {Digits}+|({Digits}+\.{Digits}+)
+NumberI = {Digits}+
+NumberD = ({Digits}+\.{Digits}+)
 Char = \'{Words}\'
 Sentence = \"({Words}|[ ])*\"
 Space = [ ]
@@ -108,8 +109,12 @@ Main = "main"
     {Is} {System.out.println(yytext());
             return new Symbol(CometMachSymbols.tIs, yychar, yyline);}
     
-    {Number} {System.out.println("number: "+yytext());
-                return new Symbol(CometMachSymbols.tNumber, yychar, yyline, new String(yytext()));}
+    {NumberI} {System.out.println("integer: "+yytext());
+                return new Symbol(CometMachSymbols.tNumberI, yychar, yyline, new String(yytext()));}
+
+    {NumberD} {System.out.println("decimal: "+yytext());
+                return new Symbol(CometMachSymbols.tNumberD, yychar, yyline, new String(yytext()));}            
+    
     {Char} {System.out.println("char: "+yytext());
             return new Symbol(CometMachSymbols.tChar, yychar, yyline, new String(yytext()));}
     
@@ -160,11 +165,11 @@ Main = "main"
                 return new Symbol(CometMachSymbols.tSymbol, yychar, yyline);}
     {Boolean} {System.out.println(yytext());
                 return new Symbol(CometMachSymbols.tBoolean, yychar, yyline);}
+    {Space} {System.out.println("<S>");}
+
+    {LineEnd} {System.out.println("<LE>");}
     
-    {Space} {System.out.println("space");
-             return new Symbol(CometMachSymbols.tSpace, yychar, yyline);}
-    {LineEnd} {return new Symbol(CometMachSymbols.tLineEnd, yychar, yyline);}
-    {Tab} {return new Symbol(CometMachSymbols.tTab, yychar, yyline);}
+    {Tab} {System.out.println("<T>");}
     
     {Id} {System.out.println("id: "+yytext());
             return new Symbol(CometMachSymbols.tId, yychar, yyline, new String(yytext()));}

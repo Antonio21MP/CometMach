@@ -1,7 +1,12 @@
 int a, b;
 int c, d=1, e;
 int i=2, u=1;
-dec z=2.2, w;
-word ho="hola mundo", na="como estas", nw;
-symbol f='A', ds='C';
-bool t=true, f=false;
+dec d=2.2, z=1.23;
+dec a;
+symbol cc = 'A', cx;
+symbol zz, xx='Z';
+word wr = "hola mundo", wr1 = "esta es para vos";
+word wr3, wr2="adios";
+bool fr = false, fr1 = true;
+bool fr2 = true, fr3;
+bool fr4, fr5=false;
