@@ -24,10 +24,12 @@ non terminal nAssignation, nAssignation_E1, nAssignation_E2;
 non terminal nOperations, nOperations_E1,nOperations_E2,nOperations_E3;
 non terminal nSentences, nSentences_E1, nCompObjects;
 non terminal nLogicalOpe;
+non terminal nForSentence, nForSentence_E1;
+non terminal nForObjectOptions;
 non terminal nInsideComp, nInsideComp_E1; 
 non terminal nIf, nIf_E1, nIf_E2, nIf_E3, nInside_If;
 non terminal nList_DI, nList_DI_Repeat;
-non terminal nFor;
+non terminal nFor, nFor_E1, nFor_E2, nInside_For;
 non terminal nDoCicle;
 non terminal nCicle;
 non terminal nMain, nInside, nInside_Repeat;
@@ -40,7 +42,10 @@ start with nMain;
 nMain ::= tMain tParOpen tParClose tInit 
 {:System.out.println("---Main Begin---");:} nInside tEnd {:System.out.println("---Main End---");:};
 
-nInside ::= nTypes nInside_Repeat | nAssignation nInside_Repeat | nIf nInside_Repeat;
+nInside ::= nTypes nInside_Repeat 
+            | nAssignation nInside_Repeat 
+            | nIf nInside_Repeat 
+            | nFor nInside_Repeat;
 
 nTypes ::= nInt 
             | nDec 
@@ -143,7 +148,8 @@ nInsideComp_E1 ::= nSentences nLogicalOpe nInsideComp_E1
 
 nList_DI ::= nIf nList_DI_Repeat
             | nTypes nList_DI_Repeat
-            | nAssignation nList_DI_Repeat;
+            | nAssignation nList_DI_Repeat
+            | nFor nList_DI_Repeat;
 
 nList_DI_Repeat ::= nList_DI | ;
 //Gramatica de if
@@ -152,3 +158,17 @@ nInside_If ::= tInit nList_DI tEnd
                 |tInit nList_DI tEnd tElse tInit nList_DI tEnd;
 nIf_E1 ::= tParOpen nInsideComp tParClose nInside_If;
 nIf_E2 ::= tIf nIf_E1;
+
+//Sentencias para operaciones dentro del for
+nForSentence ::= nForSentence_E1;
+nForSentence_E1 ::= nForObjectOptions tTo nForObjectOptions tEndSentence tId;
+
+//Objetos usados dentro de la operacion del for
+nForObjectOptions ::= tNumberD
+                        |tNumberI
+                        |tId;
+//Gramatica de for
+nFor ::= nFor_E2;
+nInside_For ::= tInit nList_DI tEnd;
+nFor_E1 ::= tParOpen nForSentence tParClose nInside_For; 
+nFor_E2 ::= tFor nFor_E1;
