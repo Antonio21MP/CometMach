@@ -31,7 +31,7 @@ non terminal nIf, nIf_E1, nIf_E2, nIf_E3, nInside_If;
 non terminal nList_DI, nList_DI_Repeat;
 non terminal nFor, nFor_E1, nFor_E2, nInside_For;
 non terminal nDoCicle;
-non terminal nCicle;
+non terminal nCicle, nCicle_E1, nCicle_E2, nCicle_E3, nInside_Cicle;
 non terminal nMain, nInside, nInside_Repeat;
 
 precedence left tAdd, tSub;
@@ -45,7 +45,8 @@ nMain ::= tMain tParOpen tParClose tInit
 nInside ::= nTypes nInside_Repeat 
             | nAssignation nInside_Repeat 
             | nIf nInside_Repeat 
-            | nFor nInside_Repeat;
+            | nFor nInside_Repeat
+            | nCicle nInside_Repeat;
 
 nTypes ::= nInt 
             | nDec 
@@ -128,7 +129,7 @@ nOperations_E3 ::= nOperations_E3 tAdd nOperations_E2
                     | nOperations_E3 tSub nOperations_E2
                     | nOperations_E2;
 
-//Sentencias de operaciones dentro del if
+//Sentencias de operaciones dentro del if y cicle
 nSentences ::= nSentences_E1;
 nSentences_E1 ::=nCompObjects tComparative nCompObjects;
 
@@ -149,7 +150,8 @@ nInsideComp_E1 ::= nSentences nLogicalOpe nInsideComp_E1
 nList_DI ::= nIf nList_DI_Repeat
             | nTypes nList_DI_Repeat
             | nAssignation nList_DI_Repeat
-            | nFor nList_DI_Repeat;
+            | nFor nList_DI_Repeat
+            | nCicle nList_DI_Repeat;
 
 nList_DI_Repeat ::= nList_DI | ;
 //Gramatica de if
@@ -172,3 +174,11 @@ nFor ::= nFor_E2;
 nInside_For ::= tInit nList_DI tEnd;
 nFor_E1 ::= tParOpen nForSentence tParClose nInside_For; 
 nFor_E2 ::= tFor nFor_E1;
+
+//Gramatica de while
+nCicle ::= nCicle_E3;
+nInside_Cicle ::= tInit nList_DI tEnd;
+nCicle_E3 ::= nSentences 
+                |tTrue;
+nCicle_E2 ::= tParOpen nSentences tParClose nInside_Cicle;
+nCicle_E3 ::= tCicle nCicle_E2;
