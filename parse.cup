@@ -4,7 +4,7 @@ import java_cup.runtime.*;
 
 terminal tTrue, tFalse, tIf, tAssign, tOr, tAnd, tComparative, tElseif, tElse, tSwap, tIs;
 terminal tThen, tClose, tDefault, tFor, tParOpen, tParClose, tTo, tEnd, tMain;
-terminal tDoCicle, tCicle, tBox, tBoxAssing, tFunction, tVoid, tReturn, tCommentary;
+terminal tCicle, tBox, tBoxAssing, tFunction, tVoid, tReturn, tCommentary;
 terminal tInit, tInteger, tDecimal, tWord,  tSymbol, tBoolean;
 terminal tId, tStapleOpen, tStapleClose, tComma, tAdd, tSub, tMulti, tDiv, tEndSentence;
 terminal String tSentence, tNumberI, tNumberD, tChar;
@@ -30,8 +30,11 @@ non terminal nInsideComp, nInsideComp_E1;
 non terminal nIf, nIf_E1, nIf_E2, nIf_E3, nInside_If;
 non terminal nList_DI, nList_DI_Repeat;
 non terminal nFor, nFor_E1, nFor_E2, nInside_For;
-non terminal nDoCicle;
 non terminal nCicle, nCicle_E1, nCicle_E2, nCicle_E3, nInside_Cicle;
+non terminal nSwap, nSwap_E1, nSwap_E2, nSwap_E3, nInside_Swap;
+non terminal nIs, nIs_E1, nIs_E2, nObject_Is, nInside_Is;
+non terminal nDefault, nDefault_E1, nInside_Default;
+non terminal nList_Is, nList_Is_Repeat;
 non terminal nMain, nInside, nInside_Repeat;
 
 precedence left tAdd, tSub;
@@ -46,7 +49,8 @@ nInside ::= nTypes nInside_Repeat
             | nAssignation nInside_Repeat 
             | nIf nInside_Repeat 
             | nFor nInside_Repeat
-            | nCicle nInside_Repeat;
+            | nCicle nInside_Repeat
+            | nSwap nInside_Repeat;
 
 nTypes ::= nInt 
             | nDec 
@@ -151,7 +155,8 @@ nList_DI ::= nIf nList_DI_Repeat
             | nTypes nList_DI_Repeat
             | nAssignation nList_DI_Repeat
             | nFor nList_DI_Repeat
-            | nCicle nList_DI_Repeat;
+            | nCicle nList_DI_Repeat
+            | nSwap nList_DI_Repeat;
 
 nList_DI_Repeat ::= nList_DI | ;
 //Gramatica de if
@@ -175,10 +180,35 @@ nInside_For ::= tInit nList_DI tEnd;
 nFor_E1 ::= tParOpen nForSentence tParClose nInside_For; 
 nFor_E2 ::= tFor nFor_E1;
 
-//Gramatica de while
+//Gramatica de cicle
 nCicle ::= nCicle_E3;
 nInside_Cicle ::= tInit nList_DI tEnd;
 nCicle_E3 ::= nSentences 
                 |tTrue;
 nCicle_E2 ::= tParOpen nSentences tParClose nInside_Cicle;
 nCicle_E3 ::= tCicle nCicle_E2;
+
+//Objetos usados para is
+nObject_Is ::= tNumberI
+                | tChar;
+
+//Gramatica de is
+nIs ::= nIs_E2;
+nInside_Is ::= tInit nList_DI tEnd;
+nIs_E1 ::= tParOpen nObject_Is tParClose nInside_Is;
+nIs_E2 ::= tIs nIs_E1;
+
+//Repeticion de gramatica de is
+nList_Is ::= nIs nList_Is_Repeat;
+nList_Is_Repeat ::= nList_Is | ;
+
+//Gramatica de default
+nDefault ::= nDefault_E1;
+nInside_Default ::= tInit nList_DI tEnd;
+nDefault_E1 ::= tDefault nInside_Default;
+
+//Gramatica de swap
+nSwap ::= nSwap_E2;
+nInside_Swap ::= tInit nList_Is nDefault tEnd;
+nSwap_E1 ::= tParOpen tId tParClose nInside_Swap; 
+nSwap_E2 ::= tSwap nSwap_E1;

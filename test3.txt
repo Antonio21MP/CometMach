@@ -55,4 +55,29 @@ cicle(zz<=100){
         }
     }
 }
+swap(zz){
+    is(55){
+        if(a!=b && b>=4 || c==true){
+            x= 15 + j + i;
+        }
+    }
+    is('B'){
+        if(z==1){
+            vv= 00;
+        }else{
+            x = "hola";
+            m = 'R';
+        }
+    }
+    default{
+        cicle(zz<=100){
+            int x = 0;
+            for(1 to 10 ; j){
+                if(a!=b && b>=4 || c==true){
+                   x= 15 + j + i;
+                }
+            }
+        }
+    }
+}
 }
