@@ -22,9 +22,11 @@ non terminal nBool, nBool_Declaration_Mixed, nBool_Declaration_Mixed_E1, nBool_D
              nBool_Declaration_Mixed_E3, nBool_Declaration_Mixed_E4, nBool_Declaration_Mixed_E5;
 non terminal nAssignation, nAssignation_E1, nAssignation_E2;
 non terminal nOperations, nOperations_E1,nOperations_E2,nOperations_E3;
-non terminal nIf;
-non terminal nElse;
-non terminal nElseif;
+non terminal nSentences, nSentences_E1, nCompObjects;
+non terminal nLogicalOpe;
+non terminal nInsideComp, nInsideComp_E1; 
+non terminal nIf, nIf_E1, nIf_E2, nIf_E3, nInside_If;
+non terminal nList_DI, nList_DI_Repeat;
 non terminal nFor;
 non terminal nDoCicle;
 non terminal nCicle;
@@ -38,7 +40,7 @@ start with nMain;
 nMain ::= tMain tParOpen tParClose tInit 
 {:System.out.println("---Main Begin---");:} nInside tEnd {:System.out.println("---Main End---");:};
 
-nInside ::= nTypes nInside_Repeat | nAssignation nInside_Repeat;
+nInside ::= nTypes nInside_Repeat | nAssignation nInside_Repeat | nIf nInside_Repeat;
 
 nTypes ::= nInt 
             | nDec 
@@ -53,51 +55,51 @@ nSym ::= nSym_Declaration_Mixed;
 nWord ::= nWord_Declaration_Mixed;
 nBool ::= nBool_Declaration_Mixed;
 //Declaracion de int para ambos casos.
-nInt_Declaration_Mixed ::= nInt_Declaration_Mixed_E4 {:System.out.println("---IF---");:};
-nInt_Declaration_Mixed_E1 ::= tComma nInt_Declaration_Mixed_E3 {:System.out.println("---I1---");:}
-                                | tEndSentence {:System.out.println("---I1S---");:};
-nInt_Declaration_Mixed_E2 ::= tAssign tNumberI nInt_Declaration_Mixed_E1 {:System.out.println("---I2---");:} 
-                                | nInt_Declaration_Mixed_E1{:System.out.println("---I2S---");:};
-nInt_Declaration_Mixed_E3 ::=  tId nInt_Declaration_Mixed_E2{:System.out.println("---I3---");:};
-nInt_Declaration_Mixed_E4 ::= tInteger nInt_Declaration_Mixed_E3 {:System.out.println("---I4---");:};
+nInt_Declaration_Mixed ::= nInt_Declaration_Mixed_E4;
+nInt_Declaration_Mixed_E1 ::= tComma nInt_Declaration_Mixed_E3
+                                | tEndSentence ;
+nInt_Declaration_Mixed_E2 ::= tAssign tNumberI nInt_Declaration_Mixed_E1 
+                                | nInt_Declaration_Mixed_E1;
+nInt_Declaration_Mixed_E3 ::=  tId nInt_Declaration_Mixed_E2;
+nInt_Declaration_Mixed_E4 ::= tInteger nInt_Declaration_Mixed_E3 ;
 
 //Declaracion de dec para ambos casos.
-nDec_Declaration_Mixed ::= nDec_Declaration_Mixed_E4 {:System.out.println("---DF---");:};
-nDec_Declaration_Mixed_E1 ::= tComma nDec_Declaration_Mixed_E3 {:System.out.println("---D1---");:}
-                                | tEndSentence {:System.out.println("---D1S---");:};
-nDec_Declaration_Mixed_E2 ::= tAssign tNumberD nDec_Declaration_Mixed_E1 {:System.out.println("---D2---");:} 
-                                | nDec_Declaration_Mixed_E1{:System.out.println("---D2S---");:};
-nDec_Declaration_Mixed_E3 ::=  tId nDec_Declaration_Mixed_E2{:System.out.println("---D3---");:};
-nDec_Declaration_Mixed_E4 ::= tDecimal nDec_Declaration_Mixed_E3 {:System.out.println("---D4---");:};
+nDec_Declaration_Mixed ::= nDec_Declaration_Mixed_E4 ;
+nDec_Declaration_Mixed_E1 ::= tComma nDec_Declaration_Mixed_E3 
+                                | tEndSentence ;
+nDec_Declaration_Mixed_E2 ::= tAssign tNumberD nDec_Declaration_Mixed_E1  
+                                | nDec_Declaration_Mixed_E1;
+nDec_Declaration_Mixed_E3 ::=  tId nDec_Declaration_Mixed_E2;
+nDec_Declaration_Mixed_E4 ::= tDecimal nDec_Declaration_Mixed_E3;
 
 //Declaracion de sym para ambos casos.
-nSym_Declaration_Mixed ::= nSym_Declaration_Mixed_E4 {:System.out.println("---SF---");:};
-nSym_Declaration_Mixed_E1 ::= tComma nSym_Declaration_Mixed_E3 {:System.out.println("---S1---");:}
-                                | tEndSentence {:System.out.println("---S1S---");:};
-nSym_Declaration_Mixed_E2 ::= tAssign tChar nSym_Declaration_Mixed_E1 {:System.out.println("---S2---");:} 
-                                | nSym_Declaration_Mixed_E1{:System.out.println("---S2S---");:};
-nSym_Declaration_Mixed_E3 ::=  tId nSym_Declaration_Mixed_E2{:System.out.println("---S3---");:};
-nSym_Declaration_Mixed_E4 ::= tSymbol nSym_Declaration_Mixed_E3 {:System.out.println("---S4---");:};
+nSym_Declaration_Mixed ::= nSym_Declaration_Mixed_E4;
+nSym_Declaration_Mixed_E1 ::= tComma nSym_Declaration_Mixed_E3
+                                | tEndSentence ;
+nSym_Declaration_Mixed_E2 ::= tAssign tChar nSym_Declaration_Mixed_E1 
+                                | nSym_Declaration_Mixed_E1;
+nSym_Declaration_Mixed_E3 ::=  tId nSym_Declaration_Mixed_E2;
+nSym_Declaration_Mixed_E4 ::= tSymbol nSym_Declaration_Mixed_E3 ;
 
 //Declaracion de word para ambos casos.
-nWord_Declaration_Mixed ::= nWord_Declaration_Mixed_E4 {:System.out.println("---WF---");:};
-nWord_Declaration_Mixed_E1 ::= tComma nWord_Declaration_Mixed_E3 {:System.out.println("---W1---");:}
-                                | tEndSentence {:System.out.println("---W1S---");:};
-nWord_Declaration_Mixed_E2 ::= tAssign tSentence nWord_Declaration_Mixed_E1 {:System.out.println("---W2---");:} 
-                                | nWord_Declaration_Mixed_E1{:System.out.println("---W2S---");:};
-nWord_Declaration_Mixed_E3 ::=  tId nWord_Declaration_Mixed_E2{:System.out.println("---W3---");:};
-nWord_Declaration_Mixed_E4 ::= tWord nWord_Declaration_Mixed_E3 {:System.out.println("---W4---");:};
+nWord_Declaration_Mixed ::= nWord_Declaration_Mixed_E4;
+nWord_Declaration_Mixed_E1 ::= tComma nWord_Declaration_Mixed_E3
+                                | tEndSentence ;
+nWord_Declaration_Mixed_E2 ::= tAssign tSentence nWord_Declaration_Mixed_E1 
+                                | nWord_Declaration_Mixed_E1;
+nWord_Declaration_Mixed_E3 ::=  tId nWord_Declaration_Mixed_E2;
+nWord_Declaration_Mixed_E4 ::= tWord nWord_Declaration_Mixed_E3;
 
 //Declaracion de bool para ambos casos.
-nBool_Declaration_Mixed ::= nBool_Declaration_Mixed_E5 {:System.out.println("---BF---");:};
-nBool_Declaration_Mixed_E1 ::= tComma nBool_Declaration_Mixed_E4 {:System.out.println("---B1---");:}
-                                | tEndSentence {:System.out.println("---B1S---");:};
-nBool_Declaration_Mixed_E2 ::= tTrue nBool_Declaration_Mixed_E1 {:System.out.println("---B2---");:}
-                                | tFalse nBool_Declaration_Mixed_E1 {:System.out.println("---B2S---");:};
-nBool_Declaration_Mixed_E3 ::= tAssign nBool_Declaration_Mixed_E2 {:System.out.println("---B3---");:} 
-                                | nBool_Declaration_Mixed_E1{:System.out.println("---B3S---");:};
-nBool_Declaration_Mixed_E4 ::=  tId nBool_Declaration_Mixed_E3{:System.out.println("---B4---");:};
-nBool_Declaration_Mixed_E5 ::= tBoolean nBool_Declaration_Mixed_E4 {:System.out.println("---B5---");:};
+nBool_Declaration_Mixed ::= nBool_Declaration_Mixed_E5;
+nBool_Declaration_Mixed_E1 ::= tComma nBool_Declaration_Mixed_E4
+                                | tEndSentence ;
+nBool_Declaration_Mixed_E2 ::= tTrue nBool_Declaration_Mixed_E1 
+                                | tFalse nBool_Declaration_Mixed_E1;
+nBool_Declaration_Mixed_E3 ::= tAssign nBool_Declaration_Mixed_E2  
+                                | nBool_Declaration_Mixed_E1;
+nBool_Declaration_Mixed_E4 ::=  tId nBool_Declaration_Mixed_E3;
+nBool_Declaration_Mixed_E5 ::= tBoolean nBool_Declaration_Mixed_E4;
 
 //Asignacion de cualquiera tipo
 
@@ -120,3 +122,33 @@ nOperations_E2 ::= nOperations_E2 tMulti nOperations_E1
 nOperations_E3 ::= nOperations_E3 tAdd nOperations_E2 
                     | nOperations_E3 tSub nOperations_E2
                     | nOperations_E2;
+
+//Sentencias de operaciones dentro del if
+nSentences ::= nSentences_E1;
+nSentences_E1 ::=nCompObjects tComparative nCompObjects;
+
+//Operadores Logicos
+nLogicalOpe ::= tAnd 
+                | tOr;
+//Sentencias usadas en varios lugares
+nCompObjects ::= tId 
+                |tNumberI
+                |tNumberD
+                |tTrue
+                |tFalse;
+//Sentencias para ejecutar ors y ands divididos por parentesis
+nInsideComp ::= nInsideComp_E1;
+nInsideComp_E1 ::= nSentences nLogicalOpe nInsideComp_E1
+                    | nSentences; 
+
+nList_DI ::= nIf nList_DI_Repeat
+            | nTypes nList_DI_Repeat
+            | nAssignation nList_DI_Repeat;
+
+nList_DI_Repeat ::= nList_DI | ;
+//Gramatica de if
+nIf ::= nIf_E2;
+nInside_If ::= tInit nList_DI tEnd
+                |tInit nList_DI tEnd tElse tInit nList_DI tEnd;
+nIf_E1 ::= tParOpen nInsideComp tParClose nInside_If;
+nIf_E2 ::= tIf nIf_E1;
