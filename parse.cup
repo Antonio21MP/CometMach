@@ -36,7 +36,11 @@ non terminal nIs, nIs_E1, nIs_E2, nObject_Is, nInside_Is;
 non terminal nDefault, nDefault_E1, nInside_Default;
 non terminal nList_Is, nList_Is_Repeat;
 non terminal nMain, nInside, nInside_Repeat;
-
+non terminal nBox, nBox_E1, nBox_E2;
+non terminal nBox_Assign_Int, nBox_Assign_Dec; 
+non terminal nBox_Assign_Bool, nBox_Assign_Bool_E1, nBox_Assign_Bool_E2, nBox_Assign_Bool_E3, nBool_Types;
+non terminal nBox_Assign_Word, nBox_Assign_Char;
+non terminal nVal_Box, nBox_Types;
 precedence left tAdd, tSub;
 precedence left tMulti, tDiv;
 
@@ -50,7 +54,8 @@ nInside ::= nTypes nInside_Repeat
             | nIf nInside_Repeat 
             | nFor nInside_Repeat
             | nCicle nInside_Repeat
-            | nSwap nInside_Repeat;
+            | nSwap nInside_Repeat
+            | nBox nInside_Repeat;
 
 nTypes ::= nInt 
             | nDec 
@@ -111,8 +116,36 @@ nBool_Declaration_Mixed_E3 ::= tAssign nBool_Declaration_Mixed_E2
 nBool_Declaration_Mixed_E4 ::=  tId nBool_Declaration_Mixed_E3;
 nBool_Declaration_Mixed_E5 ::= tBoolean nBool_Declaration_Mixed_E4;
 
-//Asignacion de cualquiera tipo
+//Asignaciones de tipos de Box
+/*
+nBox_Assign_Bool ::= nBox_Assign_Bool_E3;
+nBox_Assign_Bool_E1 ::= nBool_Types nBox_Assign_Bool_E2
+                        | nBool_Types;
+nBox_Assign_Bool_E2 ::= tComma nBox_Assign_Bool_E1;
+nBox_Assign_Bool_E3 ::= nBool_Types nBox_Assign_Bool_E2;
+//valores de bool
+nBool_Types ::= tTrue
+                |tFalse;
 
+*/
+//Tipos de box
+nBox_Types ::= tInteger
+                |tDecimal
+                |tSymbol
+                |tWord
+                |tBoolean;
+//Objetos dentro de los corchetes de box
+nVal_Box ::= tNumberI
+                |tId;
+//Declaracion de Box
+nBox ::= nBox_E2;
+nBox_E1 ::= tParOpen nVal_Box tParClose tEndSentence;
+nBox_E2 ::= tBox nBox_Types tId nBox_E1;
+
+//Declaracion con asignacion de box
+
+
+//Asignacion de cualquiera tipo
 nAssignation ::= nAssignation_E2;
 nAssignation_E1 ::= nOperations tEndSentence
                     | tChar tEndSentence
@@ -156,7 +189,8 @@ nList_DI ::= nIf nList_DI_Repeat
             | nAssignation nList_DI_Repeat
             | nFor nList_DI_Repeat
             | nCicle nList_DI_Repeat
-            | nSwap nList_DI_Repeat;
+            | nSwap nList_DI_Repeat
+            | nBox nList_DI_Repeat;
 
 nList_DI_Repeat ::= nList_DI | ;
 //Gramatica de if

@@ -75,9 +75,15 @@ swap(zz){
             for(1 to 10 ; j){
                 if(a!=b && b>=4 || c==true){
                    x= 15 + j + i;
+                   box bool z(21);
+                   box dec e(22);
                 }
             }
         }
     }
 }
+
+box int array(44);
+box word xx2(z);
+box symbol w2(wx);
 }
