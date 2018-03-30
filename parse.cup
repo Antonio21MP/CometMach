@@ -41,14 +41,19 @@ non terminal nBox_Assign_Bool, nBox_Assign_Bool_E1, nBox_Assign_Bool_E2, nBox_As
 non terminal nBox_Assign_Word, nBox_Assign_Word_E1, nBox_Assign_Word_E2, nBox_Assign_Word_E3; 
 non terminal nBox_Assign_Sym, nBox_Assign_Sym_E1, nBox_Assign_Sym_E2, nBox_Assign_Sym_E3;
 non terminal nVal_Box, nBox_Assign;
+non terminal nOutside, nOutside_Repeat;
+non terminal nFunc, nFunc_E1, nFunc_E2, nInside_Func;
+non terminal nVoid, nVoid_E1, nVoid_E2, nInside_Void;
+non terminal nParam, nParam_E1, nParam_E2, nParam_E3, nVP_Types; 
 precedence left tAdd, tSub;
 precedence left tMulti, tDiv;
 
 start with nMain;
 
 nMain ::= tMain tParOpen tParClose tInit 
-{:System.out.println("---Main Begin---");:} nInside tEnd {:System.out.println("---Main End---");:};
-
+{:System.out.println("---Main Begin---");:} nInside tEnd {:System.out.println("---Main End---");:}
+nOutside;
+//Repeticion dentro del main
 nInside ::= nTypes nInside_Repeat 
             | nAssignation nInside_Repeat 
             | nIf nInside_Repeat 
@@ -57,12 +62,20 @@ nInside ::= nTypes nInside_Repeat
             | nSwap nInside_Repeat
             | nBox nInside_Repeat;
 
+nInside_Repeat ::= nInside | ;
+//Repeticion fuera del main
+nOutside ::= nFunc nOutside_Repeat
+            |nVoid nOutside_Repeat
+            |nTypes nOutside_Repeat
+            |nAssignation nOutside_Repeat;
+
+nOutside_Repeat ::= nOutside | ;
+
 nTypes ::= nInt 
             | nDec 
             | nWord  
             | nSym 
             | nBool;
-nInside_Repeat ::= nInside | ;
 
 nInt ::= nInt_Decl;
 nDec ::= nDec_Decl;
@@ -289,4 +302,26 @@ nInside_Swap ::= tInit nList_Is nDefault tEnd;
 nSwap_E1 ::= tParOpen tId tParClose nInside_Swap; 
 nSwap_E2 ::= tSwap nSwap_E1;
 
-//Gratica func
+//Gramatica de tipos para func y parametros
+nVP_Types ::= tInteger
+                |tBoolean
+                |tDecimal
+                |tWord
+                |tSymbol;
+//Gramatica de parametros
+nParam ::= nParam_E3;
+nParam_E1 ::= tId nParam_E2 
+                |tId ;
+nParam_E2 ::= tComma nVP_Types nParam_E1; 
+nParam_E3 ::= nVP_Types tId nParam_E2;
+//Gramatica func
+nFunc ::= nFunc_E2;
+nInside_Func ::= tInit nList_DI tEnd;
+nFunc_E1 ::= tParOpen nParam tParClose nInside_Func;
+nFunc_E2 ::= tFunction nVP_Types tId nFunc_E1;
+
+//Gramatica void
+nVoid ::= nVoid_E2;
+nInside_Void ::= tInit nList_DI tEnd;
+nVoid_E1 ::= tParOpen nParam tParClose nInside_Void;
+nVoid_E2 ::= tVoid tId nVoid_E1;
