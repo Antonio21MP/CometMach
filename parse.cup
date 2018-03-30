@@ -10,16 +10,14 @@ terminal tId, tStapleOpen, tStapleClose, tComma, tAdd, tSub, tMulti, tDiv, tEndS
 terminal String tSentence, tNumberI, tNumberD, tChar;
 
 non terminal nTypes;
-non terminal nInt, nInt_Declaration_Mixed, nInt_Declaration_Mixed_E1, nInt_Declaration_Mixed_E2,
-             nInt_Declaration_Mixed_E3, nInt_Declaration_Mixed_E4;
-non terminal nSym, nSym_Declaration_Mixed, nSym_Declaration_Mixed_E1, nSym_Declaration_Mixed_E2,
-             nSym_Declaration_Mixed_E3, nSym_Declaration_Mixed_E4;
-non terminal nWord, nWord_Declaration_Mixed, nWord_Declaration_Mixed_E1, nWord_Declaration_Mixed_E2,
-             nWord_Declaration_Mixed_E3, nWord_Declaration_Mixed_E4;
-non terminal nDec, nDec_Declaration_Mixed, nDec_Declaration_Mixed_E1, nDec_Declaration_Mixed_E2,
-             nDec_Declaration_Mixed_E3, nDec_Declaration_Mixed_E4;
-non terminal nBool, nBool_Declaration_Mixed, nBool_Declaration_Mixed_E1, nBool_Declaration_Mixed_E2,
-             nBool_Declaration_Mixed_E3, nBool_Declaration_Mixed_E4, nBool_Declaration_Mixed_E5;
+non terminal nInt, nInt_Decl, nInt_Decl_E1, nInt_Decl_E2, nInt_Decl_E3, nInt_Decl_E4;
+non terminal nSym, nSym_Decl, nSym_Decl_E1, nSym_Decl_E2, nSym_Decl_E3, nSym_Decl_E4;
+non terminal nWord, nWord_Decl, nWord_Decl_E1, nWord_Decl_E2,
+             nWord_Decl_E3, nWord_Decl_E4;
+non terminal nDec, nDec_Decl, nDec_Decl_E1, nDec_Decl_E2,
+             nDec_Decl_E3, nDec_Decl_E4;
+non terminal nBool, nBool_Decl, nBool_Decl_E1, nBool_Decl_E2,
+             nBool_Decl_E3, nBool_Decl_E4, nBool_Decl_E5;
 non terminal nAssignation, nAssignation_E1, nAssignation_E2;
 non terminal nOperations, nOperations_E1,nOperations_E2,nOperations_E3;
 non terminal nSentences, nSentences_E1, nCompObjects;
@@ -66,57 +64,57 @@ nTypes ::= nInt
             | nBool;
 nInside_Repeat ::= nInside | ;
 
-nInt ::= nInt_Declaration_Mixed;
-nDec ::= nDec_Declaration_Mixed;
-nSym ::= nSym_Declaration_Mixed;
-nWord ::= nWord_Declaration_Mixed;
-nBool ::= nBool_Declaration_Mixed;
+nInt ::= nInt_Decl;
+nDec ::= nDec_Decl;
+nSym ::= nSym_Decl;
+nWord ::= nWord_Decl;
+nBool ::= nBool_Decl;
 //Declaracion de int para ambos casos.
-nInt_Declaration_Mixed ::= nInt_Declaration_Mixed_E4;
-nInt_Declaration_Mixed_E1 ::= tComma nInt_Declaration_Mixed_E3
+nInt_Decl ::= nInt_Decl_E4;
+nInt_Decl_E1 ::= tComma nInt_Decl_E3
                                 | tEndSentence ;
-nInt_Declaration_Mixed_E2 ::= tAssign tNumberI nInt_Declaration_Mixed_E1 
-                                | nInt_Declaration_Mixed_E1;
-nInt_Declaration_Mixed_E3 ::=  tId nInt_Declaration_Mixed_E2;
-nInt_Declaration_Mixed_E4 ::= tInteger nInt_Declaration_Mixed_E3 ;
+nInt_Decl_E2 ::= tAssign tNumberI nInt_Decl_E1 
+                                | nInt_Decl_E1;
+nInt_Decl_E3 ::=  tId nInt_Decl_E2;
+nInt_Decl_E4 ::= tInteger nInt_Decl_E3 ;
 
 //Declaracion de dec para ambos casos.
-nDec_Declaration_Mixed ::= nDec_Declaration_Mixed_E4 ;
-nDec_Declaration_Mixed_E1 ::= tComma nDec_Declaration_Mixed_E3 
+nDec_Decl ::= nDec_Decl_E4 ;
+nDec_Decl_E1 ::= tComma nDec_Decl_E3 
                                 | tEndSentence ;
-nDec_Declaration_Mixed_E2 ::= tAssign tNumberD nDec_Declaration_Mixed_E1  
-                                | nDec_Declaration_Mixed_E1;
-nDec_Declaration_Mixed_E3 ::=  tId nDec_Declaration_Mixed_E2;
-nDec_Declaration_Mixed_E4 ::= tDecimal nDec_Declaration_Mixed_E3;
+nDec_Decl_E2 ::= tAssign tNumberD nDec_Decl_E1  
+                                | nDec_Decl_E1;
+nDec_Decl_E3 ::=  tId nDec_Decl_E2;
+nDec_Decl_E4 ::= tDecimal nDec_Decl_E3;
 
 //Declaracion de sym para ambos casos.
-nSym_Declaration_Mixed ::= nSym_Declaration_Mixed_E4;
-nSym_Declaration_Mixed_E1 ::= tComma nSym_Declaration_Mixed_E3
+nSym_Decl ::= nSym_Decl_E4;
+nSym_Decl_E1 ::= tComma nSym_Decl_E3
                                 | tEndSentence ;
-nSym_Declaration_Mixed_E2 ::= tAssign tChar nSym_Declaration_Mixed_E1 
-                                | nSym_Declaration_Mixed_E1;
-nSym_Declaration_Mixed_E3 ::=  tId nSym_Declaration_Mixed_E2;
-nSym_Declaration_Mixed_E4 ::= tSymbol nSym_Declaration_Mixed_E3 ;
+nSym_Decl_E2 ::= tAssign tChar nSym_Decl_E1 
+                                | nSym_Decl_E1;
+nSym_Decl_E3 ::=  tId nSym_Decl_E2;
+nSym_Decl_E4 ::= tSymbol nSym_Decl_E3 ;
 
 //Declaracion de word para ambos casos.
-nWord_Declaration_Mixed ::= nWord_Declaration_Mixed_E4;
-nWord_Declaration_Mixed_E1 ::= tComma nWord_Declaration_Mixed_E3
+nWord_Decl ::= nWord_Decl_E4;
+nWord_Decl_E1 ::= tComma nWord_Decl_E3
                                 | tEndSentence ;
-nWord_Declaration_Mixed_E2 ::= tAssign tSentence nWord_Declaration_Mixed_E1 
-                                | nWord_Declaration_Mixed_E1;
-nWord_Declaration_Mixed_E3 ::=  tId nWord_Declaration_Mixed_E2;
-nWord_Declaration_Mixed_E4 ::= tWord nWord_Declaration_Mixed_E3;
+nWord_Decl_E2 ::= tAssign tSentence nWord_Decl_E1 
+                                | nWord_Decl_E1;
+nWord_Decl_E3 ::=  tId nWord_Decl_E2;
+nWord_Decl_E4 ::= tWord nWord_Decl_E3;
 
 //Declaracion de bool para ambos casos.
-nBool_Declaration_Mixed ::= nBool_Declaration_Mixed_E5;
-nBool_Declaration_Mixed_E1 ::= tComma nBool_Declaration_Mixed_E4
+nBool_Decl ::= nBool_Decl_E5;
+nBool_Decl_E1 ::= tComma nBool_Decl_E4
                                 | tEndSentence ;
-nBool_Declaration_Mixed_E2 ::= tTrue nBool_Declaration_Mixed_E1 
-                                | tFalse nBool_Declaration_Mixed_E1;
-nBool_Declaration_Mixed_E3 ::= tAssign nBool_Declaration_Mixed_E2  
-                                | nBool_Declaration_Mixed_E1;
-nBool_Declaration_Mixed_E4 ::=  tId nBool_Declaration_Mixed_E3;
-nBool_Declaration_Mixed_E5 ::= tBoolean nBool_Declaration_Mixed_E4;
+nBool_Decl_E2 ::= tTrue nBool_Decl_E1 
+                                | tFalse nBool_Decl_E1;
+nBool_Decl_E3 ::= tAssign nBool_Decl_E2  
+                                | nBool_Decl_E1;
+nBool_Decl_E4 ::=  tId nBool_Decl_E3;
+nBool_Decl_E5 ::= tBoolean nBool_Decl_E4;
 
 //Asignaciones de tipos de Box
 //Asignaciones box bool 
@@ -290,3 +288,5 @@ nSwap ::= nSwap_E2;
 nInside_Swap ::= tInit nList_Is nDefault tEnd;
 nSwap_E1 ::= tParOpen tId tParClose nInside_Swap; 
 nSwap_E2 ::= tSwap nSwap_E1;
+
+//Gratica func
