@@ -113,7 +113,10 @@ func int metodo(int b, word x, int c, symbol z, dec g, bool t){
     return 0;
 }
 
-void metodo(int b, word x, int c, symbol z, dec g, bool t){
+void metodo1(int b, word x, int c, symbol z, dec g, bool t){
     box bool array.assign(true, false, true);
     lw(4) = 155;
+}
+void metodo2(int b){
+    metodo2[b, c, 1];
 }

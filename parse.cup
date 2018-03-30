@@ -44,7 +44,10 @@ non terminal nVal_Box, nBox_Assign;
 non terminal nOutside, nOutside_Repeat;
 non terminal nFunc, nFunc_E1, nFunc_E2, nInside_Func, nList_Func, nList_Func_Repeat, nReturn;
 non terminal nVoid, nVoid_E1, nVoid_E2, nInside_Void;
-non terminal nParam, nParam_E1, nParam_E2, nParam_E3, nVP_Types; 
+non terminal nParam, nParam_E1, nParam_E2, nParam_E3, nVP_Types;
+non terminal nCallMethod, nCallMethod_E1, nCallMethod_E2; 
+non terminal nAssign_Method, nAssign_Method_E1, nAssign_Method_E2, nAssign_Method_E3;
+non terminal nParam_Value;
 precedence left tAdd, tSub;
 precedence left tMulti, tDiv;
 
@@ -60,7 +63,9 @@ nInside ::= nTypes nInside_Repeat
             | nFor nInside_Repeat
             | nCicle nInside_Repeat
             | nSwap nInside_Repeat
-            | nBox nInside_Repeat;
+            | nBox nInside_Repeat
+            | nCallMethod nInside_Repeat
+            ;
 
 nInside_Repeat ::= nInside | ;
 //Repeticion fuera del main
@@ -245,7 +250,8 @@ nList_DI ::= nIf nList_DI_Repeat
             | nFor nList_DI_Repeat
             | nCicle nList_DI_Repeat
             | nSwap nList_DI_Repeat
-            | nBox nList_DI_Repeat;
+            | nBox nList_DI_Repeat
+            | nCallMethod nList_DI_Repeat;
 
 nList_DI_Repeat ::= nList_DI | ;
 //Gramatica de if
@@ -313,7 +319,8 @@ nParam ::= nParam_E3;
 nParam_E1 ::= tId nParam_E2 
                 |tId ;
 nParam_E2 ::= tComma nVP_Types nParam_E1; 
-nParam_E3 ::= nVP_Types tId nParam_E2;
+nParam_E3 ::= nVP_Types tId nParam_E2 
+                |nVP_Types tId;
 
 // Gramatica de lista de objetos que contiene solo func
 nList_Func ::= nIf nList_Func_Repeat
@@ -323,12 +330,35 @@ nList_Func ::= nIf nList_Func_Repeat
             | nCicle nList_Func_Repeat
             | nSwap nList_Func_Repeat
             | nBox nList_Func_Repeat
-            | nReturn nList_Func_Repeat;
+            | nReturn nList_Func_Repeat
+            | nCallMethod nList_Func_Repeat;
 
 nList_Func_Repeat ::= nList_Func | ;
 
+
 //Gramatica de return
 nReturn ::= tReturn nAssignation_E1;
+
+//asignacion de valores por parametro
+nParam_Value ::= tId
+                |tChar
+                | tTrue
+                | tFalse
+                | tSentence
+                | tNumberD
+                | tNumberI;
+nAssign_Method ::= nAssign_Method_E3;
+nAssign_Method_E1 ::= nParam_Value nAssign_Method_E2
+                        | nParam_Value; 
+nAssign_Method_E2 ::= tComma nAssign_Method_E1;
+nAssign_Method_E3 ::= nParam_Value nAssign_Method_E2
+                        |nParam_Value;
+//Llamada de metodo
+nCallMethod ::= nCallMethod_E2;
+nCallMethod_E1 ::= nAssign_Method;
+nCallMethod_E2 ::= tId tStapleOpen tStapleClose tEndSentence
+                    |tId tStapleOpen nCallMethod_E1 tStapleClose tEndSentence;
+
 //Gramatica func
 nFunc ::= nFunc_E2;
 nInside_Func ::= tInit nList_Func tEnd;
@@ -340,3 +370,4 @@ nVoid ::= nVoid_E2;
 nInside_Void ::= tInit nList_DI tEnd;
 nVoid_E1 ::= tParOpen nParam tParClose nInside_Void;
 nVoid_E2 ::= tVoid tId nVoid_E1;
+
