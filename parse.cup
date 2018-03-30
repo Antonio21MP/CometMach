@@ -42,7 +42,7 @@ non terminal nBox_Assign_Dec, nBox_Assign_Dec_E1, nBox_Assign_Dec_E2, nBox_Assig
 non terminal nBox_Assign_Bool, nBox_Assign_Bool_E1, nBox_Assign_Bool_E2, nBox_Assign_Bool_E3, nBool_Types;
 non terminal nBox_Assign_Word, nBox_Assign_Word_E1, nBox_Assign_Word_E2, nBox_Assign_Word_E3; 
 non terminal nBox_Assign_Sym, nBox_Assign_Sym_E1, nBox_Assign_Sym_E2, nBox_Assign_Sym_E3;
-non terminal nVal_Box;
+non terminal nVal_Box, nBox_Assign;
 precedence left tAdd, tSub;
 precedence left tMulti, tDiv;
 
@@ -180,6 +180,14 @@ nBox_E1 ::= tBoolean tId nBox_EB
             | tSymbol tId nBox_ES
             | tWord tId nBox_EW;
 nBox_E2 ::= tBox nBox_E1;
+
+//Asignacion de box despues de declarado
+nBox_Assign ::= tNumberI tEndSentence
+                | tTrue tEndSentence
+                | tChar tEndSentence
+                | tSentence tEndSentence
+                | tFalse tEndSentence
+                | tNumberD tEndSentence;
 //Asignacion de cualquiera tipo
 nAssignation ::= nAssignation_E2;
 nAssignation_E1 ::= nOperations tEndSentence
@@ -187,7 +195,8 @@ nAssignation_E1 ::= nOperations tEndSentence
                     | tTrue tEndSentence
                     | tFalse tEndSentence
                     | tSentence tEndSentence;
-nAssignation_E2 ::= tId tAssign nAssignation_E1;
+nAssignation_E2 ::= tId tAssign nAssignation_E1
+                    | tId tParOpen nVal_Box tParClose tAssign nBox_Assign;
 //Operaciones
 nOperations ::= nOperations_E3;
 nOperations_E1 ::= tId 

@@ -66,7 +66,6 @@ Swap = "swap"
 Is = "is"
 Default = "default"
 Cicle = "cicle"
-DoCicle = "do"
 To = "to"
 /*Blocks*/
 Init = "{"
@@ -134,8 +133,6 @@ Main = "main"
                 return new Symbol(CometMachSymbols.tParClose, yychar, yyline);}
     {End} {System.out.println(yytext());
             return new Symbol(CometMachSymbols.tEnd, yychar, yyline);}
-    {DoCicle} {System.out.println(yytext());
-                return new Symbol(CometMachSymbols.tDoCicle, yychar, yyline);}
     {Cicle} {System.out.println(yytext());
                 return new Symbol(CometMachSymbols.tCicle, yychar, yyline);}
     {Box} {System.out.println(yytext());

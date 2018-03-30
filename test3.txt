@@ -46,6 +46,8 @@ for (0 to 100;i){
         x= 15 + j + i;
         }
     }
+    lw1(2) = true;
+    lw1(5) = false;
 }
 cicle(zz<=100){
     int x = 0;
@@ -91,4 +93,9 @@ box word array.assign("hola", "mundo", "jeje");
 box symbol array.assign('A', 'b', 'c');
 box int array.assign(1, 2, 3, 4);
 box dec array.assign(1.1, 2.2, 33.3);
+ll(1) = 1.2;
+ll1(a) = 'A';
+ll2(55) = "hola";
+lw(4) = 155;
+
 }
