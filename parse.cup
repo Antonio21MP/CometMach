@@ -27,20 +27,22 @@ non terminal nLogicalOpe;
 non terminal nForSentence, nForSentence_E1;
 non terminal nForObjectOptions;
 non terminal nInsideComp, nInsideComp_E1; 
-non terminal nIf, nIf_E1, nIf_E2, nIf_E3, nInside_If;
+non terminal nIf, nIf_E1, nIf_E2, nInside_If;
 non terminal nList_DI, nList_DI_Repeat;
 non terminal nFor, nFor_E1, nFor_E2, nInside_For;
-non terminal nCicle, nCicle_E1, nCicle_E2, nCicle_E3, nInside_Cicle;
-non terminal nSwap, nSwap_E1, nSwap_E2, nSwap_E3, nInside_Swap;
+non terminal nCicle, nCicle_E2, nCicle_E3, nInside_Cicle;
+non terminal nSwap, nSwap_E1, nSwap_E2, nInside_Swap;
 non terminal nIs, nIs_E1, nIs_E2, nObject_Is, nInside_Is;
 non terminal nDefault, nDefault_E1, nInside_Default;
 non terminal nList_Is, nList_Is_Repeat;
 non terminal nMain, nInside, nInside_Repeat;
-non terminal nBox, nBox_E1, nBox_E2;
-non terminal nBox_Assign_Int, nBox_Assign_Dec; 
+non terminal nBox, nBox_E1, nBox_E2, nBox_EB, nBox_EI, nBox_ED, nBox_EW, nBox_ES;
+non terminal nBox_Assign_Int, nBox_Assign_Int_E1, nBox_Assign_Int_E2, nBox_Assign_Int_E3; 
+non terminal nBox_Assign_Dec, nBox_Assign_Dec_E1, nBox_Assign_Dec_E2, nBox_Assign_Dec_E3; 
 non terminal nBox_Assign_Bool, nBox_Assign_Bool_E1, nBox_Assign_Bool_E2, nBox_Assign_Bool_E3, nBool_Types;
-non terminal nBox_Assign_Word, nBox_Assign_Char;
-non terminal nVal_Box, nBox_Types;
+non terminal nBox_Assign_Word, nBox_Assign_Word_E1, nBox_Assign_Word_E2, nBox_Assign_Word_E3; 
+non terminal nBox_Assign_Sym, nBox_Assign_Sym_E1, nBox_Assign_Sym_E2, nBox_Assign_Sym_E3;
+non terminal nVal_Box;
 precedence left tAdd, tSub;
 precedence left tMulti, tDiv;
 
@@ -117,34 +119,67 @@ nBool_Declaration_Mixed_E4 ::=  tId nBool_Declaration_Mixed_E3;
 nBool_Declaration_Mixed_E5 ::= tBoolean nBool_Declaration_Mixed_E4;
 
 //Asignaciones de tipos de Box
-/*
+//Asignaciones box bool 
 nBox_Assign_Bool ::= nBox_Assign_Bool_E3;
 nBox_Assign_Bool_E1 ::= nBool_Types nBox_Assign_Bool_E2
                         | nBool_Types;
 nBox_Assign_Bool_E2 ::= tComma nBox_Assign_Bool_E1;
 nBox_Assign_Bool_E3 ::= nBool_Types nBox_Assign_Bool_E2;
+
+//Asignaciones box int
+nBox_Assign_Int ::= nBox_Assign_Int_E3;
+nBox_Assign_Int_E1 ::=tNumberI nBox_Assign_Int_E2
+                        | tNumberI;
+nBox_Assign_Int_E2 ::= tComma nBox_Assign_Int_E1;
+nBox_Assign_Int_E3 ::=tNumberI nBox_Assign_Int_E2;
+
+//Asignaciones box dec
+nBox_Assign_Dec ::= nBox_Assign_Dec_E3;
+nBox_Assign_Dec_E1 ::=tNumberD nBox_Assign_Dec_E2
+                        | tNumberD;
+nBox_Assign_Dec_E2 ::= tComma nBox_Assign_Dec_E1;
+nBox_Assign_Dec_E3 ::=tNumberD nBox_Assign_Dec_E2;
+
+//Asignaciones box int
+nBox_Assign_Word ::= nBox_Assign_Word_E3;
+nBox_Assign_Word_E1 ::=tSentence nBox_Assign_Word_E2
+                        | tSentence;
+nBox_Assign_Word_E2 ::= tComma nBox_Assign_Word_E1;
+nBox_Assign_Word_E3 ::=tSentence nBox_Assign_Word_E2;
+
+//Asignaciones box int
+nBox_Assign_Sym ::= nBox_Assign_Sym_E3;
+nBox_Assign_Sym_E1 ::=tChar nBox_Assign_Sym_E2
+                        | tChar;
+nBox_Assign_Sym_E2 ::= tComma nBox_Assign_Sym_E1;
+nBox_Assign_Sym_E3 ::=tChar nBox_Assign_Sym_E2;
+
+
 //valores de bool
 nBool_Types ::= tTrue
                 |tFalse;
 
-*/
-//Tipos de box
-nBox_Types ::= tInteger
-                |tDecimal
-                |tSymbol
-                |tWord
-                |tBoolean;
 //Objetos dentro de los corchetes de box
 nVal_Box ::= tNumberI
                 |tId;
 //Declaracion de Box
 nBox ::= nBox_E2;
-nBox_E1 ::= tParOpen nVal_Box tParClose tEndSentence;
-nBox_E2 ::= tBox nBox_Types tId nBox_E1;
-
-//Declaracion con asignacion de box
-
-
+nBox_EB ::= tParOpen nVal_Box tParClose tEndSentence
+            | tBoxAssing tParOpen nBox_Assign_Bool tParClose tEndSentence;
+nBox_EI ::= tParOpen nVal_Box tParClose tEndSentence
+            | tBoxAssing tParOpen nBox_Assign_Int tParClose tEndSentence;
+nBox_ED ::= tParOpen nVal_Box tParClose tEndSentence
+            | tBoxAssing tParOpen nBox_Assign_Dec tParClose tEndSentence;
+nBox_ES ::= tParOpen nVal_Box tParClose tEndSentence
+            | tBoxAssing tParOpen nBox_Assign_Sym tParClose tEndSentence;
+nBox_EW ::= tParOpen nVal_Box tParClose tEndSentence
+            | tBoxAssing tParOpen nBox_Assign_Word tParClose tEndSentence;
+nBox_E1 ::= tBoolean tId nBox_EB
+            | tInteger tId nBox_EI
+            | tDecimal tId nBox_ED
+            | tSymbol tId nBox_ES
+            | tWord tId nBox_EW;
+nBox_E2 ::= tBox nBox_E1;
 //Asignacion de cualquiera tipo
 nAssignation ::= nAssignation_E2;
 nAssignation_E1 ::= nOperations tEndSentence

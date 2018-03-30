@@ -59,6 +59,9 @@ swap(zz){
     is(55){
         if(a!=b && b>=4 || c==true){
             x= 15 + j + i;
+            box symbol array.assign('A', 'b', 'c');
+            box int array.assign(1, 2, 3, 4);
+            box dec array.assign(1.1, 2.2, 33.3);
         }
     }
     is('B'){
@@ -76,14 +79,16 @@ swap(zz){
                 if(a!=b && b>=4 || c==true){
                    x= 15 + j + i;
                    box bool z(21);
-                   box dec e(22);
+                   box bool array.assign(true, false, true);
                 }
             }
         }
     }
 }
 
-box int array(44);
-box word xx2(z);
-box symbol w2(wx);
+box bool array.assign(true, false, true);
+box word array.assign("hola", "mundo", "jeje");
+box symbol array.assign('A', 'b', 'c');
+box int array.assign(1, 2, 3, 4);
+box dec array.assign(1.1, 2.2, 33.3);
 }
