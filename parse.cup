@@ -42,7 +42,7 @@ non terminal nBox_Assign_Word, nBox_Assign_Word_E1, nBox_Assign_Word_E2, nBox_As
 non terminal nBox_Assign_Sym, nBox_Assign_Sym_E1, nBox_Assign_Sym_E2, nBox_Assign_Sym_E3;
 non terminal nVal_Box, nBox_Assign;
 non terminal nOutside, nOutside_Repeat;
-non terminal nFunc, nFunc_E1, nFunc_E2, nInside_Func;
+non terminal nFunc, nFunc_E1, nFunc_E2, nInside_Func, nList_Func, nList_Func_Repeat, nReturn;
 non terminal nVoid, nVoid_E1, nVoid_E2, nInside_Void;
 non terminal nParam, nParam_E1, nParam_E2, nParam_E3, nVP_Types; 
 precedence left tAdd, tSub;
@@ -314,9 +314,24 @@ nParam_E1 ::= tId nParam_E2
                 |tId ;
 nParam_E2 ::= tComma nVP_Types nParam_E1; 
 nParam_E3 ::= nVP_Types tId nParam_E2;
+
+// Gramatica de lista de objetos que contiene solo func
+nList_Func ::= nIf nList_Func_Repeat
+            | nTypes nList_Func_Repeat
+            | nAssignation nList_Func_Repeat
+            | nFor nList_Func_Repeat
+            | nCicle nList_Func_Repeat
+            | nSwap nList_Func_Repeat
+            | nBox nList_Func_Repeat
+            | nReturn nList_Func_Repeat;
+
+nList_Func_Repeat ::= nList_Func | ;
+
+//Gramatica de return
+nReturn ::= tReturn nAssignation_E1;
 //Gramatica func
 nFunc ::= nFunc_E2;
-nInside_Func ::= tInit nList_DI tEnd;
+nInside_Func ::= tInit nList_Func tEnd;
 nFunc_E1 ::= tParOpen nParam tParClose nInside_Func;
 nFunc_E2 ::= tFunction nVP_Types tId nFunc_E1;
 

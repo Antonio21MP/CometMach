@@ -109,16 +109,11 @@ func int metodo(int b, word x, int c, symbol z, dec g, bool t){
     ll1(a) = 'A';
     ll2(55) = "hola";
     lw(4) = 155;
+    
+    return 0;
 }
 
 void metodo(int b, word x, int c, symbol z, dec g, bool t){
     box bool array.assign(true, false, true);
-    box word array.assign("hola", "mundo", "jeje");
-    box symbol array.assign('A', 'b', 'c');
-    box int array.assign(1, 2, 3, 4);
-    box dec array.assign(1.1, 2.2, 33.3);
-    ll(1) = 1.2;
-    ll1(a) = 'A';
-    ll2(55) = "hola";
     lw(4) = 155;
 }
