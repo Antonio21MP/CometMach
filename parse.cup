@@ -214,7 +214,8 @@ nBox_E1 ::= tBoolean tId nBox_EB
             | tDecimal tId nBox_ED
             | tSymbol tId nBox_ES
             | tWord tId nBox_EW;
-nBox_E2 ::= tBox nBox_E1;
+nBox_E2 ::= tBox nBox_E1
+            |error {:parser.report_error("Error declaracion","Error");:} nBox_E1;
 
 //Asignacion de box despues de declarado
 nBox_Assign ::= tNumberI tEndSentence
@@ -231,7 +232,9 @@ nAssignation_E1 ::= nOperations tEndSentence
                     | tFalse tEndSentence
                     | tSentence tEndSentence;
 nAssignation_E2 ::= tId tAssign nAssignation_E1
-                    | tId tParOpen nVal_Box tParClose tAssign nBox_Assign;
+                    | tId tParOpen nVal_Box tParClose tAssign nBox_Assign
+                    | error {:parser.report_error("Error de asignacion","Error");:} nAssignation_E1
+                    | tId error {:parser.report_error("Error de declaracion","Error");:} nBox_Assign;
 //Operaciones
 nOperations ::= nOperations_E3;
 nOperations_E1 ::= tId 

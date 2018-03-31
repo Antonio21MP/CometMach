@@ -3,5 +3,10 @@ int x= 2, z=2;
 dec z, z1=2.2, x;
 bool w=true, x= false;
 word z, w="a";
-symbol x='A , z;
+symbol x='A' , z;
+
+box int xx(1);
+box dec xx.assign(1.1,2.2,3.3);
+z=2;
+z(2) =2;
 }
