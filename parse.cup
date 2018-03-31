@@ -305,7 +305,8 @@ nInside_Cicle ::= tInit nList_DI tEnd;
 nCicle_E3 ::= nSentences 
                 |tTrue;
 nCicle_E2 ::= tParOpen nSentences tParClose nInside_Cicle;
-nCicle_E3 ::= tCicle nCicle_E2;
+nCicle_E3 ::= tCicle nCicle_E2
+                |tCicle error {:parser.report_error("Error en declaracion de cicle","Error");:} nCicle_E2;
 
 //Objetos usados para is
 nObject_Is ::= tNumberI

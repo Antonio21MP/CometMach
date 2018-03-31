@@ -22,5 +22,12 @@ for(a to 2 ;x){
         est = 's';
     }
 }
-
+cicle(z > 2){
+    for(a to 2 ;x){
+    c=2;
+    if(x>=1){
+        est = 's';
+    }
+}
+}
 }
