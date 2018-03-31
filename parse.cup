@@ -5,7 +5,7 @@ parser code
 {:
     
     public void syntax_error(Symbol s){
-		report_error("ERROR DE SINTAXIS. Linea: " + s.right + " Columna: " + s.left + ". Lugar: \"" + s.value + "\"", null);
+		report_error("ERROR DE SINTAXIS -- Columna: " + s.right + " Fila: " + s.left + ". En: \"" + s.value + "\"", null);
 	}
     
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception 
@@ -107,7 +107,8 @@ nInt_Decl_E1 ::= tComma nInt_Decl_E3
                                 | tEndSentence ;
 nInt_Decl_E2 ::= tAssign tNumberI nInt_Decl_E1 
                                 | nInt_Decl_E1;
-nInt_Decl_E3 ::=  tId nInt_Decl_E2;
+nInt_Decl_E3 ::= tId nInt_Decl_E2
+                | error {:parser.report_error("Error declaracion","Error");:} nInt_Decl_E2;
 nInt_Decl_E4 ::= tInteger nInt_Decl_E3 ;
 
 //Declaracion de dec para ambos casos.
@@ -116,7 +117,8 @@ nDec_Decl_E1 ::= tComma nDec_Decl_E3
                                 | tEndSentence ;
 nDec_Decl_E2 ::= tAssign tNumberD nDec_Decl_E1  
                                 | nDec_Decl_E1;
-nDec_Decl_E3 ::=  tId nDec_Decl_E2;
+nDec_Decl_E3 ::=  tId nDec_Decl_E2
+                    | error {:parser.report_error("Error declaracion","Error");:} nDec_Decl_E2;
 nDec_Decl_E4 ::= tDecimal nDec_Decl_E3;
 
 //Declaracion de sym para ambos casos.
@@ -125,7 +127,8 @@ nSym_Decl_E1 ::= tComma nSym_Decl_E3
                                 | tEndSentence ;
 nSym_Decl_E2 ::= tAssign tChar nSym_Decl_E1 
                                 | nSym_Decl_E1;
-nSym_Decl_E3 ::=  tId nSym_Decl_E2;
+nSym_Decl_E3 ::=  tId nSym_Decl_E2
+                    | error {:parser.report_error("Error declaracion","Error");:} nSym_Decl_E2;
 nSym_Decl_E4 ::= tSymbol nSym_Decl_E3 ;
 
 //Declaracion de word para ambos casos.
@@ -134,7 +137,8 @@ nWord_Decl_E1 ::= tComma nWord_Decl_E3
                                 | tEndSentence ;
 nWord_Decl_E2 ::= tAssign tSentence nWord_Decl_E1 
                                 | nWord_Decl_E1;
-nWord_Decl_E3 ::=  tId nWord_Decl_E2;
+nWord_Decl_E3 ::=  tId nWord_Decl_E2 
+                    | error {:parser.report_error("Error declaracion","Error");:} nWord_Decl_E2;
 nWord_Decl_E4 ::= tWord nWord_Decl_E3;
 
 //Declaracion de bool para ambos casos.
@@ -145,7 +149,8 @@ nBool_Decl_E2 ::= tTrue nBool_Decl_E1
                                 | tFalse nBool_Decl_E1;
 nBool_Decl_E3 ::= tAssign nBool_Decl_E2  
                                 | nBool_Decl_E1;
-nBool_Decl_E4 ::=  tId nBool_Decl_E3;
+nBool_Decl_E4 ::=  tId nBool_Decl_E3
+                    | error {:parser.report_error("Error declaracion","Error");:} nBool_Decl_E3;
 nBool_Decl_E5 ::= tBoolean nBool_Decl_E4;
 
 //Asignaciones de tipos de Box

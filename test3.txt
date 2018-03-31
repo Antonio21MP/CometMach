@@ -1,15 +1,7 @@
 main(){
-int a, b;
-int c, d=1, e;
-int i=2, u=1;
-dec d=2.2, z=1.23;
-dec a;
-symbol cc = 'A', cx;
-symbol zz, xx='Z';
-word wr = "hola mundo", wr1 = "esta es para vos";
-word wr3, wr2="adios";
-bool fr = false, fr1 = true;
-bool fr2 = true, fr3;
-bool fr4, fr5=false;
-
+int x= 2, z=2;
+dec z, z1=2.2, x;
+bool w=true, x= false;
+word z, w="a";
+symbol x='A , z;
 }
