@@ -61,6 +61,7 @@ non terminal nParam, nParam_E1, nParam_E2, nParam_E3, nVP_Types;
 non terminal nCallMethod, nCallMethod_E1, nCallMethod_E2; 
 non terminal nAssign_Method, nAssign_Method_E1, nAssign_Method_E2, nAssign_Method_E3;
 non terminal nParam_Value;
+non terminal nCommetary;
 precedence left tAdd, tSub;
 precedence left tMulti, tDiv;
 precedence left tAnd, tOr;
@@ -78,6 +79,7 @@ nInside ::= nTypes nInside_Repeat
             | nSwap nInside_Repeat
             | nBox nInside_Repeat
             | nCallMethod nInside_Repeat
+            | nCommetary nInside_Repeat
             ;
 
 nInside_Repeat ::= nInside | ;
@@ -86,7 +88,8 @@ nOptional ::= nOutside | ;
 nOutside ::= nFunc nOutside_Repeat
             |nVoid nOutside_Repeat
             |nTypes nOutside_Repeat
-            |nAssignation nOutside_Repeat;
+            |nAssignation nOutside_Repeat
+            | nCommetary nOutside_Repeat;
 
 nOutside_Repeat ::= nOutside | ;
 
@@ -95,6 +98,8 @@ nTypes ::= nInt
             | nWord  
             | nSym 
             | nBool;
+
+nCommetary ::= tCommentary;
 
 nInt ::= nInt_Decl;
 nDec ::= nDec_Decl;
@@ -273,7 +278,8 @@ nList_DI ::= nIf nList_DI_Repeat
             | nCicle nList_DI_Repeat
             | nSwap nList_DI_Repeat
             | nBox nList_DI_Repeat
-            | nCallMethod nList_DI_Repeat;
+            | nCallMethod nList_DI_Repeat
+            | nCommetary nList_DI_Repeat;
 
 nList_DI_Repeat ::= nList_DI | ;
 //Gramatica de if
@@ -358,7 +364,8 @@ nList_Func ::= nIf nList_Func_Repeat
             | nSwap nList_Func_Repeat
             | nBox nList_Func_Repeat
             | nReturn nList_Func_Repeat
-            | nCallMethod nList_Func_Repeat;
+            | nCallMethod nList_Func_Repeat
+            | nCommetary nList_Func_Repeat;
 
 nList_Func_Repeat ::= nList_Func | ;
 

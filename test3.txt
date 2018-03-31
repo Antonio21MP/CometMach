@@ -30,8 +30,8 @@ cicle(z > 2){
     }
 }
 }
-
-swap(zz){
+$termino
+$*swap(zz){
     is(55){
         if(a!=b && b>=4 || c==true){
             x= 15 + j + i;
@@ -48,13 +48,14 @@ swap(zz){
     default{
         x=0;
     }
-}
+}*$
 metodo2 [b, c, c];
 }
 
 func int metodo (int b, word x, int c, symbol z, dec g, bool t){
     box bool array.assign(true, false, true);
     ll(1) = 1.2;
+    $termino
     lw(4) = 155;
     return 0;
 }
@@ -64,4 +65,6 @@ void metodo1(int b, word x, int c, symbol z, dec g, bool t){
 }
 void metodo2(int b){
     metodo2[b, c, 1];
+    $termino
 }
+$termino
