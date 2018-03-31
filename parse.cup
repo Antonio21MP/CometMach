@@ -399,5 +399,6 @@ nFunc_E2 ::= tFunction nVP_Types tId nFunc_E1
 nVoid ::= nVoid_E2;
 nInside_Void ::= tInit nList_DI tEnd;
 nVoid_E1 ::= tParOpen nParam tParClose nInside_Void;
-nVoid_E2 ::= tVoid tId nVoid_E1;
+nVoid_E2 ::= tVoid tId nVoid_E1
+            | tVoid {:parser.report_error("Error declaracion de funcion void","Error");:} nVoid_E1;
 
