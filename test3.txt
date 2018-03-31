@@ -49,5 +49,12 @@ swap(zz){
         x=0;
     }
 }
+metodo2 [b, c, c];
+}
 
+func int metodo (int b, word x, int c, symbol z, dec g, bool t){
+    box bool array.assign(true, false, true);
+    ll(1) = 1.2;
+    lw(4) = 155;
+    return 0;
 }
