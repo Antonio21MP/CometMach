@@ -316,7 +316,8 @@ nObject_Is ::= tNumberI
 nIs ::= nIs_E2;
 nInside_Is ::= tInit nList_DI tEnd;
 nIs_E1 ::= tParOpen nObject_Is tParClose nInside_Is;
-nIs_E2 ::= tIs nIs_E1;
+nIs_E2 ::= tIs nIs_E1
+            | tIs error {:parser.report_error("Error en declaracion de cicle","Error");:} nIs_E1;
 
 //Repeticion de gramatica de is
 nList_Is ::= nIs nList_Is_Repeat;
@@ -331,7 +332,8 @@ nDefault_E1 ::= tDefault nInside_Default;
 nSwap ::= nSwap_E2;
 nInside_Swap ::= tInit nList_Is nDefault tEnd;
 nSwap_E1 ::= tParOpen tId tParClose nInside_Swap; 
-nSwap_E2 ::= tSwap nSwap_E1;
+nSwap_E2 ::= tSwap nSwap_E1
+            | tSwap error {:parser.report_error("Error en declaracion de cicle","Error");:} nSwap_E1;
 
 //Gramatica de tipos para func y parametros
 nVP_Types ::= tInteger
