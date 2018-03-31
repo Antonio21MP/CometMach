@@ -1,6 +1,19 @@
 package cometmach;
 import java_cup.runtime.*;
 
+parser code
+{:
+    
+    public void syntax_error(Symbol s){
+		report_error("ERROR DE SINTAXIS. Linea: " + s.right + " Columna: " + s.left + ". Lugar: \"" + s.value + "\"", null);
+	}
+    
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception 
+    {
+        //report_fatal_error("Fatal Error: " + s.value, null);
+    }
+
+:}
 
 terminal tTrue, tFalse, tIf, tAssign, tOr, tAnd, tComparative, tElseif, tElse, tSwap, tIs;
 terminal tThen, tClose, tDefault, tFor, tParOpen, tParClose, tTo, tEnd, tMain;
@@ -41,7 +54,7 @@ non terminal nBox_Assign_Bool, nBox_Assign_Bool_E1, nBox_Assign_Bool_E2, nBox_As
 non terminal nBox_Assign_Word, nBox_Assign_Word_E1, nBox_Assign_Word_E2, nBox_Assign_Word_E3; 
 non terminal nBox_Assign_Sym, nBox_Assign_Sym_E1, nBox_Assign_Sym_E2, nBox_Assign_Sym_E3;
 non terminal nVal_Box, nBox_Assign;
-non terminal nOutside, nOutside_Repeat;
+non terminal nOutside, nOutside_Repeat, nOptional;
 non terminal nFunc, nFunc_E1, nFunc_E2, nInside_Func, nList_Func, nList_Func_Repeat, nReturn;
 non terminal nVoid, nVoid_E1, nVoid_E2, nInside_Void;
 non terminal nParam, nParam_E1, nParam_E2, nParam_E3, nVP_Types;
@@ -55,7 +68,7 @@ start with nMain;
 
 nMain ::= tMain tParOpen tParClose tInit 
 {:System.out.println("---Main Begin---");:} nInside tEnd {:System.out.println("---Main End---");:}
-nOutside;
+nOptional;
 //Repeticion dentro del main
 nInside ::= nTypes nInside_Repeat 
             | nAssignation nInside_Repeat 
@@ -69,6 +82,7 @@ nInside ::= nTypes nInside_Repeat
 
 nInside_Repeat ::= nInside | ;
 //Repeticion fuera del main
+nOptional ::= nOutside | ;
 nOutside ::= nFunc nOutside_Repeat
             |nVoid nOutside_Repeat
             |nTypes nOutside_Repeat
