@@ -9,4 +9,10 @@ box int xx(1);
 box dec xx.assign(1.1,2.2,3.3);
 z=2;
 z(2) =2;
+
+if (x==1) {
+    hola=1;
+}else{
+    est = 's';
+}
 }

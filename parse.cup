@@ -63,7 +63,7 @@ non terminal nAssign_Method, nAssign_Method_E1, nAssign_Method_E2, nAssign_Metho
 non terminal nParam_Value;
 precedence left tAdd, tSub;
 precedence left tMulti, tDiv;
-
+precedence left tAnd, tOr;
 start with nMain;
 
 nMain ::= tMain tParOpen tParClose tInit 
@@ -234,7 +234,7 @@ nAssignation_E1 ::= nOperations tEndSentence
 nAssignation_E2 ::= tId tAssign nAssignation_E1
                     | tId tParOpen nVal_Box tParClose tAssign nBox_Assign
                     | error {:parser.report_error("Error de asignacion","Error");:} nAssignation_E1
-                    | tId error {:parser.report_error("Error de declaracion","Error");:} nBox_Assign;
+                    | tId error {:parser.report_error("Error de asignacion","Error");:} nBox_Assign;
 //Operaciones
 nOperations ::= nOperations_E3;
 nOperations_E1 ::= tId 
@@ -281,7 +281,8 @@ nIf ::= nIf_E2;
 nInside_If ::= tInit nList_DI tEnd
                 |tInit nList_DI tEnd tElse tInit nList_DI tEnd;
 nIf_E1 ::= tParOpen nInsideComp tParClose nInside_If;
-nIf_E2 ::= tIf nIf_E1;
+nIf_E2 ::= tIf nIf_E1
+            | tIf error {:parser.report_error("Error de asignacion","Error");:} nIf_E1;
 
 //Sentencias para operaciones dentro del for
 nForSentence ::= nForSentence_E1;
