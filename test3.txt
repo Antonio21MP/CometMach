@@ -15,4 +15,12 @@ if (x==1) {
 }else{
     est = 's';
 }
+
+for(a to 2 ;x){
+    c=2;
+    if(x>=1){
+        est = 's';
+    }
+}
+
 }

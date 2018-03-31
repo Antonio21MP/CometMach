@@ -282,7 +282,7 @@ nInside_If ::= tInit nList_DI tEnd
                 |tInit nList_DI tEnd tElse tInit nList_DI tEnd;
 nIf_E1 ::= tParOpen nInsideComp tParClose nInside_If;
 nIf_E2 ::= tIf nIf_E1
-            | tIf error {:parser.report_error("Error de asignacion","Error");:} nIf_E1;
+            | tIf error {:parser.report_error("Error en declaracion de if","Error");:} nIf_E1;
 
 //Sentencias para operaciones dentro del for
 nForSentence ::= nForSentence_E1;
@@ -296,7 +296,8 @@ nForObjectOptions ::= tNumberD
 nFor ::= nFor_E2;
 nInside_For ::= tInit nList_DI tEnd;
 nFor_E1 ::= tParOpen nForSentence tParClose nInside_For; 
-nFor_E2 ::= tFor nFor_E1;
+nFor_E2 ::= tFor nFor_E1
+            | tFor error {:parser.report_error("Error en declaracion de for","Error");:} nFor_E1;
 
 //Gramatica de cicle
 nCicle ::= nCicle_E3;
