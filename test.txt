@@ -1,38 +1,122 @@
 main(){
-    int var1=0;
-    dec var2;
-    symbol var3='A';
-    symbol var4;
-    word var33 = "Hola mundo"
-    tf var5=true;
-    tf var6=false;
-    tf var7;
-    $* this if probes that var6 is true *$
-    if(var6==true && var5==false){
-        var2=5.5;
-    }
-    if(var2>=1 || var1==0){
-        var1=45;
+int a, b;
+int c, d=1, e;
+int i=2, u=1;
+dec d=2.2, z=1.23;
+dec a;
+symbol cc = 'A', cx;
+symbol zz, xx='Z';
+word wr = "hola mundo", wr1 = "esta es para vos";
+word wr3, wr2="adios";
+bool fr = false, fr1 = true;
+bool fr2 = true, fr3;
+bool fr4, fr5=false;
+
+n = 44;
+d = 3.4;
+de = d + x + 32 + 11;
+c = c - 1 + 2 * 3;
+x = 4 / (3+2) * 2;
+
+if(a<=b){
+    c = 4;
+}else{
+    int x, c = 0;
+    c= 0;
+    if(z==1){
+        vv= 00;
     }else{
-        var1=0; 
+        x = "hola";
+        m = 'R';
     }
-    for(0 to 10){
-        var1=var1+1;
+}
+
+if(a!=b && b>=4 || c==true){
+    z= 5;
+}
+for(1 to 10 ; i){
+    if(a!=b && b>=4 || c==true){
+    x= 15 + i;
     }
-    swap(var3){
-        value 'A':
-            var6=true;
-        value 'B':
-            var6=false;
+}
+for (0 to 100;i){
+    int x = 0;
+    for(1 to 10 ; j){
+        if(a!=b && b>=4 || c==true){
+        x= 15 + j + i;
+        }
     }
-    $ box declaration with assingment 
-    box num var8[10].assign(1,2,3,4,7,6,5,1,33,10);
-    box tf var9[3].assign(true,false,true);
-    box symbol var10[5];
-    num i=0;
-    for(0 to 5){
-        var10[num]='A';
-        num=num+1;
+    lw1(2) = true;
+    lw1(5) = false;
+}
+cicle(zz<=100){
+    int x = 0;
+    for(1 to 10 ; j){
+        if(a!=b && b>=4 || c==true){
+        x= 15 + j + i;
+        }
     }
-    %
+}
+swap(zz){
+    is(55){
+        if(a!=b && b>=4 || c==true){
+            x= 15 + j + i;
+            box symbol array.assign('A', 'b', 'c');
+            box int array.assign(1, 2, 3, 4);
+            box dec array.assign(1.1, 2.2, 33.3);
+        }
+    }
+    is('B'){
+        if(z==1){
+            vv= 00;
+        }else{
+            x = "hola";
+            m = 'R';
+        }
+    }
+    default{
+        cicle(zz<=100){
+            int x = 0;
+            for(1 to 10 ; j){
+                if(a!=b && b>=4 || c==true){
+                   x= 15 + j + i;
+                   box bool z(21);
+                   box bool array.assign(true, false, true);
+                }
+            }
+        }
+    }
+}
+
+box bool array.assign(true, false, true);
+box word array.assign("hola", "mundo", "jeje");
+box symbol array.assign('A', 'b', 'c');
+box int array.assign(1, 2, 3, 4);
+box dec array.assign(1.1, 2.2, 33.3);
+ll(1) = 1.2;
+ll1(a) = 'A';
+ll2(55) = "hola";
+lw(4) = 155;
+
+}
+func int metodo(int b, word x, int c, symbol z, dec g, bool t){
+    box bool array.assign(true, false, true);
+    box word array.assign("hola", "mundo", "jeje");
+    box symbol array.assign('A', 'b', 'c');
+    box int array.assign(1, 2, 3, 4);
+    box dec array.assign(1.1, 2.2, 33.3);
+    ll(1) = 1.2;
+    ll1(a) = 'A';
+    ll2(55) = "hola";
+    lw(4) = 155;
+    
+    return 0;
+}
+
+void metodo1(int b, word x, int c, symbol z, dec g, bool t){
+    box bool array.assign(true, false, true);
+    lw(4) = 155;
+}
+void metodo2(int b){
+    metodo2[b, c, 1];
 }

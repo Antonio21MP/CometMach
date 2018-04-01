@@ -1,0 +1,62 @@
+/*
+//Declaracion de int solo para variables sin asignar
+nInt_Declarations ::= nInt_Declarations_E3;
+nInt_Declarations_E1 ::= tComma nInt_Declarations_E2 
+                        | tEndSentence;
+nInt_Declarations_E2 ::= tId nInt_Declarations_E1;
+nInt_Declarations_E3 ::= tInteger nInt_Declarations_E2;
+
+//Declaracion de int solo para variables con asignacion
+nInt_Declaration_Assingnation ::= nInt_Declaration_Assingnation_E4;
+nInt_Declaration_Assingnation_E1 ::= tComma nInt_Declaration_Assingnation_E3 
+                                    | tEndSentence;
+nInt_Declaration_Assingnation_E2 ::= tAssign tNumber nInt_Declaration_Assingnation_E1;
+nInt_Declaration_Assingnation_E3 ::=  tId nInt_Declaration_Assingnation_E2;
+nInt_Declaration_Assingnation_E4 ::= tInteger nInt_Declaration_Assingnation_E3;
+*/
+/*
+nInside ::= nTypes:t nInside_Repeat:i {: 
+                                        Node tmp = new Node("Types");
+                                        tmp.addChild((Node) t);
+                                        Node n1 = (Node)i;
+                                        String val = n1.getName();
+                                        if((val.equals("vacio")==false)){
+                                            System.out.println("vacio");
+                                            tmp.addChild((Node) i);
+                                        }
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT=tmp;
+                                        :}
+*/
+/*
+nInside_Repeat ::= nInside:i {: RESULT=i; :} | {: 
+                                                Node tmp = new Node("vacio");
+                                                RESULT=tmp; 
+                                                :};
+
+*/
+/*
+    public void syntax_error(Symbol s){
+        String lexeme = s.value.toString();
+        int row = s.right;
+        int column = s.left;
+
+        System.out.println("--- ERROR SINTACTICO RECUPERADO---");
+        System.out.println("LEXEMA: "+ lexeme);
+        System.out.println("FILA: "+ row);
+        System.out.println("COLUMNA: "+ column);
+    }
+
+    public void unrecovered_syntax_error(Symbol s){
+        String lexeme = s.value.toString();
+        int row = s.right;
+        int column = s.left;
+
+        System.out.println("--- ERROR SINTACTICO - MODO PANICO---");
+        System.out.println("LEXEMA: "+ lexeme);
+        System.out.println("FILA: "+ row);
+        System.out.println("COLUMNA: "+ column);
+    }
+*/
+java -jar C:\jflex-1.6.1\lib\java-cup-11a.jar -parser CometMachParser -symbols CometMachSymbols parse.cup
+jflex lexer.jflex
