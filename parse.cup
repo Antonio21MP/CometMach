@@ -3,7 +3,9 @@ import java_cup.runtime.*;
 
 parser code
 {:
-    
+    public String result = "";
+    public Node root;
+    public int counter = 1;
     public void syntax_error(Symbol s){
 		report_error("ERROR DE SINTAXIS -- Columna: " + s.right + " Fila: " + s.left + ". En: \"" + s.value + "\"", null);
 	}
@@ -62,16 +64,39 @@ non terminal nCallMethod, nCallMethod_E1, nCallMethod_E2;
 non terminal nAssign_Method, nAssign_Method_E1, nAssign_Method_E2, nAssign_Method_E3;
 non terminal nParam_Value;
 non terminal nCommetary;
+non terminal nCometMach;
+non terminal nId, nIds, nId_E1, nId_E2;
 precedence left tAdd, tSub;
 precedence left tMulti, tDiv;
 precedence left tAnd, tOr;
-start with nMain;
+start with nCometMach;
+
+nCometMach ::= nMain:m nOptional {:
+                                    Node tmp = new Node("Main");
+                                    tmp.addChild((Node) m);
+                                    tmp.setNodeNum(parser.counter++);
+                                    parser.root = (Node) tmp;
+                                    System.out.println("Document OK");
+                                    RESULT=tmp;
+                                    :};
 
 nMain ::= tMain tParOpen tParClose tInit 
-{:System.out.println("---Main Begin---");:} nInside tEnd {:System.out.println("---Main End---");:}
-nOptional;
+{:System.out.println("---Main Begin---");:} nInside:i tEnd {:
+                                                            System.out.println("---Main End---");
+                                                            RESULT = i;:};
 //Repeticion dentro del main
-nInside ::= nTypes nInside_Repeat 
+nInside ::= nTypes:t nInside_Repeat:r  {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=t;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) t);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :} 
             | nAssignation nInside_Repeat 
             | nIf nInside_Repeat 
             | nFor nInside_Repeat
@@ -82,18 +107,21 @@ nInside ::= nTypes nInside_Repeat
             | nCommetary nInside_Repeat
             ;
 
-nInside_Repeat ::= nInside | ;
+nInside_Repeat ::= nInside:i {: RESULT=i; :} | {:
+                                                Node tmp = new Node("vacio");
+                                                RESULT= tmp; 
+                                                :};
 //Repeticion fuera del main
 nOptional ::= nOutside | ;
 nOutside ::= nFunc nOutside_Repeat
             |nVoid nOutside_Repeat
-            |nTypes nOutside_Repeat
+            |nTypes:t {: RESULT=t; :} nOutside_Repeat
             |nAssignation nOutside_Repeat
             | nCommetary nOutside_Repeat;
 
 nOutside_Repeat ::= nOutside | ;
 
-nTypes ::= nInt 
+nTypes ::= nInt:i {: RESULT=i; :} 
             | nDec 
             | nWord  
             | nSym 
@@ -101,22 +129,53 @@ nTypes ::= nInt
 
 nCommetary ::= tCommentary;
 
-nInt ::= nInt_Decl;
+nInt ::= nInt_Decl:i {: RESULT=i; :};
 nDec ::= nDec_Decl;
 nSym ::= nSym_Decl;
 nWord ::= nWord_Decl;
 nBool ::= nBool_Decl;
 //Declaracion de int para ambos casos.
-nInt_Decl ::= nInt_Decl_E4;
-nInt_Decl_E1 ::= tComma nInt_Decl_E3
-                                | tEndSentence ;
-nInt_Decl_E2 ::= tAssign tNumberI nInt_Decl_E1 
-                                | nInt_Decl_E1;
-nInt_Decl_E3 ::= tId nInt_Decl_E2
-                | error {:parser.report_error("Error declaracion","Error");:} nInt_Decl_E2;
-nInt_Decl_E4 ::= tInteger nInt_Decl_E3 ;
+nInt_Decl ::= tInteger:i nIds:id tEndSentence {: 
+                                                Node n1 = new Node("Declaration");
+                                                Node n2 = new Node("Type");
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n1.setValue(i.toString() + id.toString());
+                                                n2.setValue(i.toString());
+                                                n1.addChild((Node) n2);
+                                                n1.addChild((Node) id);
+                                                RESULT=n1;
+                                                :};
 
-//Declaracion de dec para ambos casos.
+nIds ::= nIds:i1 tComma nId:i2 {: 
+                                Node n1 = new Node("ID");
+                                n1.setNodeNum(parser.counter++);
+                                
+                                n1.addChild((Node) i1);
+                                n1.addChild((Node) i2);
+                                RESULT=n1;
+                                :}
+        |nId:i {: 
+                RESULT=i;
+                :};
+
+nId ::= nId_E1:e {: 
+                    RESULT=e;
+                :};
+
+nId_E1 ::= tId:i {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    n1.setValue(i.toString());
+                    RESULT=n1;
+                :} 
+        |tId:id tAssign tNumberI:i {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + i.toString();
+                    n1.setValue(val);
+                    RESULT=n1;
+                :};
 nDec_Decl ::= nDec_Decl_E4 ;
 nDec_Decl_E1 ::= tComma nDec_Decl_E3 
                                 | tEndSentence ;
