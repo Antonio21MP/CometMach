@@ -1,5 +1,5 @@
 main(){
-int x=2, e, e2;
-symbol z='A', q='B', w;
+word x="2", e, e2, c, d="hola";
+int z='A', q='B', w;
 }
 
