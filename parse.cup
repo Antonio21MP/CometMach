@@ -140,7 +140,6 @@ nInt_Decl ::= tInteger:i nIds:id tEndSentence {:
                                                 Node n2 = new Node("Type");
                                                 n2.setNodeNum(parser.counter++);
                                                 n1.setNodeNum(parser.counter++);
-                                                n1.setValue(i.toString() + id.toString());
                                                 n2.setValue(i.toString());
                                                 n1.addChild((Node) n2);
                                                 n1.addChild((Node) id);
@@ -152,7 +151,6 @@ nDec_Decl ::= tDecimal:i nIds:id tEndSentence {:
                                                 Node n2 = new Node("Type");
                                                 n2.setNodeNum(parser.counter++);
                                                 n1.setNodeNum(parser.counter++);
-                                                n1.setValue(i.toString() + id.toString());
                                                 n2.setValue(i.toString());
                                                 n1.addChild((Node) n2);
                                                 n1.addChild((Node) id);
@@ -164,7 +162,6 @@ nSym_Decl ::= tSymbol:i nIds:id tEndSentence {:
                                                 Node n2 = new Node("Type");
                                                 n2.setNodeNum(parser.counter++);
                                                 n1.setNodeNum(parser.counter++);
-                                                n1.setValue(i.toString() + id.toString());
                                                 n2.setValue(i.toString());
                                                 n1.addChild((Node) n2);
                                                 n1.addChild((Node) id);
@@ -176,7 +173,6 @@ nWord_Decl ::= tWord:i nIds:id tEndSentence {:
                                                 Node n2 = new Node("Type");
                                                 n2.setNodeNum(parser.counter++);
                                                 n1.setNodeNum(parser.counter++);
-                                                n1.setValue(i.toString() + id.toString());
                                                 n2.setValue(i.toString());
                                                 n1.addChild((Node) n2);
                                                 n1.addChild((Node) id);
@@ -187,7 +183,6 @@ nBool_Decl ::= tBoolean:i nIds:id tEndSentence {:
                                                 Node n2 = new Node("Type");
                                                 n2.setNodeNum(parser.counter++);
                                                 n1.setNodeNum(parser.counter++);
-                                                n1.setValue(i.toString() + id.toString());
                                                 n2.setValue(i.toString());
                                                 n1.addChild((Node) n2);
                                                 n1.addChild((Node) id);
@@ -197,7 +192,6 @@ nBool_Decl ::= tBoolean:i nIds:id tEndSentence {:
 nIds ::= nIds:i1 tComma nId:i2 {: 
                                 Node n1 = new Node("ID");
                                 n1.setNodeNum(parser.counter++);
-                                
                                 n1.addChild((Node) i1);
                                 n1.addChild((Node) i2);
                                 RESULT=n1;

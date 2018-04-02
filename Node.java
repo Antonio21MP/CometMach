@@ -21,7 +21,6 @@ public class Node {
       setName(name);
       childs = new ArrayList<>();
       setNodeNum(0);
-      setValue(" ");
   }
     
     public void addChild(Node child){

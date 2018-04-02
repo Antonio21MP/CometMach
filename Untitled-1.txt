@@ -35,6 +35,25 @@ nInside_Repeat ::= nInside:i {: RESULT=i; :} | {:
                                                 :};
 
 */
+/*nDec_Decl ::= nDec_Decl_E4 ;
+nDec_Decl_E1 ::= tComma nDec_Decl_E3 
+                                | tEndSentence ;
+nDec_Decl_E2 ::= tAssign tNumberD nDec_Decl_E1  
+                                | nDec_Decl_E1;
+nDec_Decl_E3 ::=  tId nDec_Decl_E2
+                    | error {:parser.report_error("Error declaracion","Error");:} nDec_Decl_E2;
+nDec_Decl_E4 ::= tDecimal nDec_Decl_E3;
+*/
+//Declaracion de sym para ambos casos.
+/*nSym_Decl ::= nSym_Decl_E4;
+nSym_Decl_E1 ::= tComma nSym_Decl_E3
+                                | tEndSentence ;
+nSym_Decl_E2 ::= tAssign tChar nSym_Decl_E1 
+                                | nSym_Decl_E1;
+nSym_Decl_E3 ::=  tId nSym_Decl_E2
+                    | error {:parser.report_error("Error declaracion","Error");:} nSym_Decl_E2;
+nSym_Decl_E4 ::= tSymbol nSym_Decl_E3 ;
+*/
 /*
     public void syntax_error(Symbol s){
         String lexeme = s.value.toString();

@@ -1,5 +1,8 @@
 main(){
-word x="2", e, e2, c, d="hola";
-bool z=true, q=false, w;
+word x= "hola", d= "B";
+bool z=true, q=false;
+int xz;
+symbol c1 = 'B', c2='W';
+int r1 = 1, r2 = 3;
 }
 
