@@ -125,7 +125,7 @@ nTypes ::= nInt:i {: RESULT=i; :}
             | nDec:d {: RESULT=d; :}
             | nWord:w {: RESULT=w; :}  
             | nSym:s {: RESULT=s; :} 
-            | nBool;
+            | nBool:b {: RESULT=b; :};
 
 nCommetary ::= tCommentary;
 
@@ -133,7 +133,7 @@ nInt ::= nInt_Decl:i {: RESULT=i; :};
 nDec ::= nDec_Decl:d {: RESULT=d; :};
 nSym ::= nSym_Decl:s {: RESULT=s; :};
 nWord ::= nWord_Decl:w {: RESULT=w; :};
-nBool ::= nBool_Decl;
+nBool ::= nBool_Decl:b {: RESULT=b; :};
 //Declaracion de int para ambos casos.
 nInt_Decl ::= tInteger:i nIds:id tEndSentence {: 
                                                 Node n1 = new Node("Declaration");
@@ -172,6 +172,17 @@ nSym_Decl ::= tSymbol:i nIds:id tEndSentence {:
                                                 :};
 
 nWord_Decl ::= tWord:i nIds:id tEndSentence {: 
+                                                Node n1 = new Node("Declaration");
+                                                Node n2 = new Node("Type");
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n1.setValue(i.toString() + id.toString());
+                                                n2.setValue(i.toString());
+                                                n1.addChild((Node) n2);
+                                                n1.addChild((Node) id);
+                                                RESULT=n1;
+                                                :};
+nBool_Decl ::= tBoolean:i nIds:id tEndSentence {: 
                                                 Node n1 = new Node("Declaration");
                                                 Node n2 = new Node("Type");
                                                 n2.setNodeNum(parser.counter++);
@@ -232,33 +243,22 @@ nId_E1 ::= tId:i {:
                     String val = id.toString() + " = " + (i.toString().replaceAll("\"", ""));
                     n1.setValue(val);
                     RESULT=n1;
+                :}
+        |tId:id tAssign tTrue {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + "true";
+                    n1.setValue(val);
+                    RESULT=n1;
+                :}
+        |tId:id tAssign tFalse {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + "false";
+                    n1.setValue(val);
+                    RESULT=n1;
                 :};
 
-//Declaracion de word para ambos casos.
-/*
-nWord_Decl ::= nWord_Decl_E4;
-nWord_Decl_E1 ::= tComma nWord_Decl_E3
-                                | tEndSentence ;
-nWord_Decl_E2 ::= tAssign tSentence nWord_Decl_E1 
-                                | nWord_Decl_E1;
-nWord_Decl_E3 ::=  tId nWord_Decl_E2 
-                    | error {:parser.report_error("Error declaracion","Error");:} nWord_Decl_E2;
-nWord_Decl_E4 ::= tWord nWord_Decl_E3;
-*/
-//Declaracion de bool para ambos casos.
-nBool_Decl ::= nBool_Decl_E5;
-nBool_Decl_E1 ::= tComma nBool_Decl_E4
-                                | tEndSentence ;
-nBool_Decl_E2 ::= tTrue nBool_Decl_E1 
-                                | tFalse nBool_Decl_E1;
-nBool_Decl_E3 ::= tAssign nBool_Decl_E2  
-                                | nBool_Decl_E1;
-nBool_Decl_E4 ::=  tId nBool_Decl_E3
-                    | error {:parser.report_error("Error declaracion","Error");:} nBool_Decl_E3;
-nBool_Decl_E5 ::= tBoolean nBool_Decl_E4;
-
-//Asignaciones de tipos de Box
-//Asignaciones box bool 
 nBox_Assign_Bool ::= nBox_Assign_Bool_E3;
 nBox_Assign_Bool_E1 ::= nBool_Types nBox_Assign_Bool_E2
                         | nBool_Types;

@@ -1,5 +1,5 @@
 main(){
 word x="2", e, e2, c, d="hola";
-int z='A', q='B', w;
+bool z=true, q=false, w;
 }
 
