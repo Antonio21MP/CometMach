@@ -124,14 +124,14 @@ nOutside_Repeat ::= nOutside | ;
 nTypes ::= nInt:i {: RESULT=i; :} 
             | nDec:d {: RESULT=d; :}
             | nWord  
-            | nSym 
+            | nSym:s {: RESULT=s; :} 
             | nBool;
 
 nCommetary ::= tCommentary;
 
 nInt ::= nInt_Decl:i {: RESULT=i; :};
 nDec ::= nDec_Decl:d {: RESULT=d; :};
-nSym ::= nSym_Decl;
+nSym ::= nSym_Decl:s {: RESULT=s; :};
 nWord ::= nWord_Decl;
 nBool ::= nBool_Decl;
 //Declaracion de int para ambos casos.
@@ -148,6 +148,18 @@ nInt_Decl ::= tInteger:i nIds:id tEndSentence {:
                                                 :};
 
 nDec_Decl ::= tDecimal:i nIds:id tEndSentence {: 
+                                                Node n1 = new Node("Declaration");
+                                                Node n2 = new Node("Type");
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n1.setValue(i.toString() + id.toString());
+                                                n2.setValue(i.toString());
+                                                n1.addChild((Node) n2);
+                                                n1.addChild((Node) id);
+                                                RESULT=n1;
+                                                :};
+
+nSym_Decl ::= tSymbol:i nIds:id tEndSentence {: 
                                                 Node n1 = new Node("Declaration");
                                                 Node n2 = new Node("Type");
                                                 n2.setNodeNum(parser.counter++);
@@ -194,18 +206,15 @@ nId_E1 ::= tId:i {:
                     String val = id.toString() + " = " + i.toString();
                     n1.setValue(val);
                     RESULT=n1;
+                :}
+        |tId:id tAssign tChar:i {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + i.toString();
+                    n1.setValue(val);
+                    RESULT=n1;
                 :};
-/*nDec_Decl ::= nDec_Decl_E4 ;
-nDec_Decl_E1 ::= tComma nDec_Decl_E3 
-                                | tEndSentence ;
-nDec_Decl_E2 ::= tAssign tNumberD nDec_Decl_E1  
-                                | nDec_Decl_E1;
-nDec_Decl_E3 ::=  tId nDec_Decl_E2
-                    | error {:parser.report_error("Error declaracion","Error");:} nDec_Decl_E2;
-nDec_Decl_E4 ::= tDecimal nDec_Decl_E3;
-*/
-//Declaracion de sym para ambos casos.
-nSym_Decl ::= nSym_Decl_E4;
+/*nSym_Decl ::= nSym_Decl_E4;
 nSym_Decl_E1 ::= tComma nSym_Decl_E3
                                 | tEndSentence ;
 nSym_Decl_E2 ::= tAssign tChar nSym_Decl_E1 
@@ -213,7 +222,7 @@ nSym_Decl_E2 ::= tAssign tChar nSym_Decl_E1
 nSym_Decl_E3 ::=  tId nSym_Decl_E2
                     | error {:parser.report_error("Error declaracion","Error");:} nSym_Decl_E2;
 nSym_Decl_E4 ::= tSymbol nSym_Decl_E3 ;
-
+*/
 //Declaracion de word para ambos casos.
 nWord_Decl ::= nWord_Decl_E4;
 nWord_Decl_E1 ::= tComma nWord_Decl_E3

@@ -1,5 +1,5 @@
 main(){
 int x=2, e, e2;
-dec z=2, q=2.2, w;
+symbol z='A', q='B', w;
 }
 
