@@ -102,7 +102,18 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
             | nFor nInside_Repeat
             | nCicle nInside_Repeat
             | nSwap nInside_Repeat
-            | nBox nInside_Repeat
+            | nBox:b nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=b;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) b);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nCallMethod nInside_Repeat
             | nCommetary nInside_Repeat
             ;
@@ -253,11 +264,23 @@ nId_E1 ::= tId:i {:
                     RESULT=n1;
                 :};
 
-nBox_Assign_Bool ::= nBox_Assign_Bool_E3;
-nBox_Assign_Bool_E1 ::= nBool_Types nBox_Assign_Bool_E2
-                        | nBool_Types;
-nBox_Assign_Bool_E2 ::= tComma nBox_Assign_Bool_E1;
-nBox_Assign_Bool_E3 ::= nBool_Types nBox_Assign_Bool_E2;
+nBox_Assign_Bool ::= nBox_Assign_Bool_E3:b {:RESULT = b;:};
+nBox_Assign_Bool_E1 ::= nBool_Types:t nBox_Assign_Bool_E2:b {: 
+                                                    String val = t.toString() + b.toString();
+                                                    RESULT= val;
+                                                    :} 
+                        | nBool_Types:t {: 
+                                        String val = t.toString();
+                                        RESULT= val;
+                                        :};
+nBox_Assign_Bool_E2 ::= tComma:c nBox_Assign_Bool_E1:b {: 
+                                                    String val = c.toString() + b.toString();
+                                                    RESULT= val;
+                                                    :};
+nBox_Assign_Bool_E3 ::= nBool_Types:t nBox_Assign_Bool_E2:b {:
+                                                         String val = t.toString() + b.toString();
+                                                         RESULT = val;
+                                                         :};
 
 //Asignaciones box int
 nBox_Assign_Int ::= nBox_Assign_Int_E3;
@@ -289,16 +312,24 @@ nBox_Assign_Sym_E3 ::=tChar nBox_Assign_Sym_E2;
 
 
 //valores de bool
-nBool_Types ::= tTrue
-                |tFalse;
+nBool_Types ::= tTrue:t {: RESULT=t; :}
+                |tFalse:f {: RESULT=f; :};
 
 //Objetos dentro de los corchetes de box
-nVal_Box ::= tNumberI
-                |tId;
+nVal_Box ::= tNumberI:n {: RESULT=n; :}
+                |tId:i {: RESULT=i; :};
 //Declaracion de Box
-nBox ::= nBox_E2;
-nBox_EB ::= tParOpen nVal_Box tParClose tEndSentence
-            | tBoxAssing tParOpen nBox_Assign_Bool tParClose tEndSentence;
+nBox ::= nBox_E2:b {: RESULT=b; :};
+nBox_EB ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Bool:ab tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + ab.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
 nBox_EI ::= tParOpen nVal_Box tParClose tEndSentence
             | tBoxAssing tParOpen nBox_Assign_Int tParClose tEndSentence;
 nBox_ED ::= tParOpen nVal_Box tParClose tEndSentence
@@ -307,13 +338,34 @@ nBox_ES ::= tParOpen nVal_Box tParClose tEndSentence
             | tBoxAssing tParOpen nBox_Assign_Sym tParClose tEndSentence;
 nBox_EW ::= tParOpen nVal_Box tParClose tEndSentence
             | tBoxAssing tParOpen nBox_Assign_Word tParClose tEndSentence;
-nBox_E1 ::= tBoolean tId nBox_EB
+nBox_E1 ::= tBoolean:b tId:i nBox_EB:be {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + be.toString();
+                                n1.setValue(b.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :}
             | tInteger tId nBox_EI
             | tDecimal tId nBox_ED
             | tSymbol tId nBox_ES
             | tWord tId nBox_EW;
-nBox_E2 ::= tBox nBox_E1
-            |error {:parser.report_error("Error declaracion","Error");:} nBox_E1;
+nBox_E2 ::= tBox:b nBox_E1:be {:
+                        Node n = new Node("Declaration");
+                        Node n1 = new Node("Type");
+                        n1.setValue(b.toString());
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node)n1);
+                        n.addChild((Node)be);
+                        RESULT=n; 
+                        :};
 
 //Asignacion de box despues de declarado
 nBox_Assign ::= tNumberI tEndSentence
