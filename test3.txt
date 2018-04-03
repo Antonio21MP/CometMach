@@ -5,6 +5,9 @@ int xz;
 symbol c1 = 'B', c2='W';
 int r1 = 1, r2 = 3;
 box bool array.assign(true, false, true);
-bool arr(122);
+box bool arr(122);
+box int arr3(45);
+box int arr4.assign(1, 2, 3, 4);
+box int br4.assign(44, 21, 75, 50);
 }
 

@@ -69,7 +69,7 @@ public class CometMach {
         }
         
         try {
-            String cmd = "dot - Tpng tree.dot -o tree.png";
+            String cmd = "dot -Tpng tree.dot -o tree.png";
             Runtime.getRuntime().exec(cmd);
         } catch (Exception e) {
             System.out.println(e + "2"); 
