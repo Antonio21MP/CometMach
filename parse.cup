@@ -263,7 +263,7 @@ nId_E1 ::= tId:i {:
                     n1.setValue(val);
                     RESULT=n1;
                 :};
-
+//Asignacion de box bool
 nBox_Assign_Bool ::= nBox_Assign_Bool_E3:b {:RESULT = b;:};
 nBox_Assign_Bool_E1 ::= nBool_Types:t nBox_Assign_Bool_E2:b {: 
                                                     String val = t.toString() + b.toString();
@@ -320,14 +320,26 @@ nBox_Assign_Dec_E3 ::=tNumberD:n nBox_Assign_Dec_E2:d {:
                                                 RESULT = val;
                                                 :};
 
-//Asignaciones box int
-nBox_Assign_Word ::= nBox_Assign_Word_E3;
-nBox_Assign_Word_E1 ::=tSentence nBox_Assign_Word_E2
-                        | tSentence;
-nBox_Assign_Word_E2 ::= tComma nBox_Assign_Word_E1;
-nBox_Assign_Word_E3 ::=tSentence nBox_Assign_Word_E2;
+//Asignaciones box word
+nBox_Assign_Word ::= nBox_Assign_Word_E3:w {:RESULT = w;:};
+nBox_Assign_Word_E1 ::=tSentence:s nBox_Assign_Word_E2:w {: 
+                                                    String val = (s.toString().replaceAll("\"", "")) + w.toString();
+                                                    RESULT= val;
+                                                    :}
+                        | tSentence:s {:  
+                                    String val = s.toString().replaceAll("\"", "");
+                                    RESULT= val;
+                                    :};
+nBox_Assign_Word_E2 ::= tComma:c nBox_Assign_Word_E1:w {: 
+                                                String val = c.toString() + w.toString();
+                                                RESULT= val;
+                                                :};
+nBox_Assign_Word_E3 ::=tSentence:s nBox_Assign_Word_E2:w {:
+                                                String val = (s.toString().replaceAll("\"", "")) + w.toString();
+                                                RESULT = val;
+                                                :};
 
-//Asignaciones box int
+//Asignaciones box symbol;
 nBox_Assign_Sym ::= nBox_Assign_Sym_E3;
 nBox_Assign_Sym_E1 ::=tChar nBox_Assign_Sym_E2
                         | tChar;
@@ -365,7 +377,7 @@ nBox_EI ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
                                                     System.out.println(val);
                                                     RESULT=val; 
                                                     :};
-//por aqui vas cabron
+
 nBox_ED ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
                                                     String val = po.toString() + v.toString() + pc.toString();
                                                     RESULT=val; 
@@ -378,8 +390,18 @@ nBox_ED ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
                                                     :};
 nBox_ES ::= tParOpen nVal_Box tParClose tEndSentence
             | tBoxAssing tParOpen nBox_Assign_Sym tParClose tEndSentence;
-nBox_EW ::= tParOpen nVal_Box tParClose tEndSentence
-            | tBoxAssing tParOpen nBox_Assign_Word tParClose tEndSentence;
+//por aqui vas cabron
+nBox_EW ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Word:aw tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + aw.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
+
 nBox_E1 ::= tBoolean:b tId:i nBox_EB:be {:
                                 Node n = new Node("Box_Declaration");
                                 Node n1 = new Node("Box_Type");
@@ -423,7 +445,20 @@ nBox_E1 ::= tBoolean:b tId:i nBox_EB:be {:
                                 RESULT=n; 
                                 :} 
             | tSymbol tId nBox_ES
-            | tWord tId nBox_EW;
+            | tWord:w tId:i nBox_EW:we {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + we.toString();
+                                n1.setValue(w.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :};
 nBox_E2 ::= tBox:b nBox_E1:be {:
                         Node n = new Node("Declaration");
                         Node n1 = new Node("Type");

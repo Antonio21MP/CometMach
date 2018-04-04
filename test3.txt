@@ -10,5 +10,7 @@ box int arr3(45);
 box int arr4.assign(1, 2, 3, 4);
 box dec dr4.assign(4.4, 2.1, 7.5, 5.0);
 box dec arr23(54);
+box word wr.assign("hola", "mundo", "q");
+box word warr(54);
 }
 
