@@ -524,7 +524,9 @@ nBox_Assign ::= tNumberI tEndSentence
                 | tNumberD tEndSentence;
 //Asignacion de cualquiera tipo
 nAssignation ::= nAssignation_E2:a {: RESULT=a; :};
-nAssignation_E1 ::= nOperations tEndSentence
+nAssignation_E1 ::= tId:i tEndSentence {: RESULT=i;:}
+                    | tNumberI:ni tEndSentence {: RESULT=ni; :}
+                    | tNumberD:nd tEndSentence {: RESULT=nd; :}
                     | tChar:c tEndSentence {: RESULT=c; :}
                     | tTrue:t tEndSentence {: RESULT=t; :}
                     | tFalse:f tEndSentence {: RESULT=f; :}
@@ -544,17 +546,6 @@ nAssignation_E2 ::= tId:i tAssign:a nAssignation_E1:e {:
                     | error {:parser.report_error("Error de asignacion","Error");:} nAssignation_E1
                     | tId error {:parser.report_error("Error de asignacion","Error");:} nBox_Assign;
 //Operaciones
-nOperations ::= nOperations_E3;
-nOperations_E1 ::= tId 
-                    | tNumberI 
-                    | tNumberD
-                    |tParOpen nOperations_E3 tParClose;
-nOperations_E2 ::= nOperations_E2 tMulti nOperations_E1
-                    | nOperations_E2 tDiv nOperations_E1
-                    | nOperations_E1;
-nOperations_E3 ::= nOperations_E3 tAdd nOperations_E2 
-                    | nOperations_E3 tSub nOperations_E2
-                    | nOperations_E2;
 
 //Sentencias de operaciones dentro del if y cicle
 nSentences ::= nSentences_E1;

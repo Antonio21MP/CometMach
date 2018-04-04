@@ -19,5 +19,8 @@ a = 'C';
 c = "hola";
 x = true;
 z = false;
+w= 1;
+q = 2.2;
+r = bb;
 }
 
