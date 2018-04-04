@@ -516,12 +516,14 @@ nBox_E2 ::= tBox:b nBox_E1:be {:
                         :};
 
 //Asignacion de box despues de declarado
-nBox_Assign ::= tNumberI tEndSentence
-                | tTrue tEndSentence
-                | tChar tEndSentence
-                | tSentence tEndSentence
-                | tFalse tEndSentence
-                | tNumberD tEndSentence;
+nBox_Assign ::= tNumberI:ni tEndSentence {: RESULT=ni;:}
+                | tTrue:t tEndSentence {: RESULT=t;:}
+                | tChar:c tEndSentence {: RESULT=c;:}
+                | tSentence:s tEndSentence {: 
+                                            String val = s.toString().replaceAll("\"", "");
+                                            RESULT=val; :}
+                | tFalse:f tEndSentence {: RESULT=f;:}
+                | tNumberD:nd tEndSentence{: RESULT=nd;:};
 //Asignacion de cualquiera tipo
 nAssignation ::= nAssignation_E2:a {: RESULT=a; :};
 nAssignation_E1 ::= tId:i tEndSentence {: RESULT=i;:}
@@ -542,7 +544,17 @@ nAssignation_E2 ::= tId:i tAssign:a nAssignation_E1:e {:
                                         n.addChild((Node) n1);
                                         RESULT=n;
                                         :}
-                    | tId tParOpen nVal_Box tParClose tAssign nBox_Assign
+                    | tId:i tParOpen:po nVal_Box:v tParClose:pc tAssign:a nBox_Assign:ba {:
+                                        Node n= new Node("Var_Box_Assign");
+                                        Node n1 = new Node("Box_ID");
+                                        n1.setValue(i.toString() + po.toString() 
+                                                    + v.toString()+ pc.toString() 
+                                                    + a.toString() + ba.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node) n1);
+                                        RESULT=n;
+                                        :}
                     | error {:parser.report_error("Error de asignacion","Error");:} nAssignation_E1
                     | tId error {:parser.report_error("Error de asignacion","Error");:} nBox_Assign;
 //Operaciones
