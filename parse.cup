@@ -340,11 +340,23 @@ nBox_Assign_Word_E3 ::=tSentence:s nBox_Assign_Word_E2:w {:
                                                 :};
 
 //Asignaciones box symbol;
-nBox_Assign_Sym ::= nBox_Assign_Sym_E3;
-nBox_Assign_Sym_E1 ::=tChar nBox_Assign_Sym_E2
-                        | tChar;
-nBox_Assign_Sym_E2 ::= tComma nBox_Assign_Sym_E1;
-nBox_Assign_Sym_E3 ::=tChar nBox_Assign_Sym_E2;
+nBox_Assign_Sym ::= nBox_Assign_Sym_E3:s {:RESULT = s;:};
+nBox_Assign_Sym_E1 ::=tChar:c nBox_Assign_Sym_E2:s {: 
+                                                    String val = c.toString() + s.toString();
+                                                    RESULT= val;
+                                                    :}
+                        | tChar:c {:  
+                                    String val = c.toString();
+                                    RESULT= val;
+                                    :};
+nBox_Assign_Sym_E2 ::= tComma:c nBox_Assign_Sym_E1:s {: 
+                                                String val = c.toString() + s.toString();
+                                                RESULT= val;
+                                                :};
+nBox_Assign_Sym_E3 ::=tChar:c nBox_Assign_Sym_E2:s {:
+                                                String val = c.toString() + s.toString();
+                                                RESULT = val;
+                                                :};
 
 
 //valores de bool
@@ -388,9 +400,18 @@ nBox_ED ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
                                                     System.out.println(val);
                                                     RESULT=val; 
                                                     :};
-nBox_ES ::= tParOpen nVal_Box tParClose tEndSentence
-            | tBoxAssing tParOpen nBox_Assign_Sym tParClose tEndSentence;
 //por aqui vas cabron
+nBox_ES ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Sym:as tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + as.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
+
 nBox_EW ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
                                                     String val = po.toString() + v.toString() + pc.toString();
                                                     RESULT=val; 
@@ -444,7 +465,20 @@ nBox_E1 ::= tBoolean:b tId:i nBox_EB:be {:
                                 n.addChild((Node)n2);        
                                 RESULT=n; 
                                 :} 
-            | tSymbol tId nBox_ES
+            | tSymbol:s tId:i nBox_ES:se {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + se.toString();
+                                n1.setValue(s.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :} 
             | tWord:w tId:i nBox_EW:we {:
                                 Node n = new Node("Box_Declaration");
                                 Node n1 = new Node("Box_Type");
