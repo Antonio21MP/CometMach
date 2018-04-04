@@ -8,6 +8,7 @@ box bool array.assign(true, false, true);
 box bool arr(122);
 box int arr3(45);
 box int arr4.assign(1, 2, 3, 4);
-box int br4.assign(44, 21, 75, 50);
+box dec dr4.assign(4.4, 2.1, 7.5, 5.0);
+box dec arr23(54);
 }
 

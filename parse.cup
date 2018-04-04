@@ -302,11 +302,23 @@ nBox_Assign_Int_E3 ::=tNumberI:n nBox_Assign_Int_E2:i {:
                                                          :};
 
 //Asignaciones box dec
-nBox_Assign_Dec ::= nBox_Assign_Dec_E3;
-nBox_Assign_Dec_E1 ::=tNumberD nBox_Assign_Dec_E2
-                        | tNumberD;
-nBox_Assign_Dec_E2 ::= tComma nBox_Assign_Dec_E1;
-nBox_Assign_Dec_E3 ::=tNumberD nBox_Assign_Dec_E2;
+nBox_Assign_Dec ::= nBox_Assign_Dec_E3:d {:RESULT = d;:};
+nBox_Assign_Dec_E1 ::=tNumberD:n nBox_Assign_Dec_E2:d {: 
+                                                    String val = n.toString() + d.toString();
+                                                    RESULT= val;
+                                                    :}
+                        | tNumberD:n {:  
+                                    String val = n.toString();
+                                    RESULT= val;
+                                    :};
+nBox_Assign_Dec_E2 ::= tComma:c nBox_Assign_Dec_E1:d{: 
+                                                String val = c.toString() + d.toString();
+                                                RESULT= val;
+                                                :};
+nBox_Assign_Dec_E3 ::=tNumberD:n nBox_Assign_Dec_E2:d {:
+                                                String val = n.toString() + d.toString();
+                                                RESULT = val;
+                                                :};
 
 //Asignaciones box int
 nBox_Assign_Word ::= nBox_Assign_Word_E3;
@@ -353,8 +365,17 @@ nBox_EI ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
                                                     System.out.println(val);
                                                     RESULT=val; 
                                                     :};
-nBox_ED ::= tParOpen nVal_Box tParClose tEndSentence
-            | tBoxAssing tParOpen nBox_Assign_Dec tParClose tEndSentence;
+//por aqui vas cabron
+nBox_ED ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Dec:ad tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + ad.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
 nBox_ES ::= tParOpen nVal_Box tParClose tEndSentence
             | tBoxAssing tParOpen nBox_Assign_Sym tParClose tEndSentence;
 nBox_EW ::= tParOpen nVal_Box tParClose tEndSentence
@@ -387,7 +408,20 @@ nBox_E1 ::= tBoolean:b tId:i nBox_EB:be {:
                                 n.addChild((Node)n2);        
                                 RESULT=n; 
                                 :} 
-            | tDecimal tId nBox_ED
+            | tDecimal:d tId:i nBox_ED:de {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + de.toString();
+                                n1.setValue(d.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :} 
             | tSymbol tId nBox_ES
             | tWord tId nBox_EW;
 nBox_E2 ::= tBox:b nBox_E1:be {:
