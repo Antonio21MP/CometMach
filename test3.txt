@@ -15,5 +15,9 @@ box word warr(54);
 box symbol sr.assign('A', 'B', 'C');
 box symbol sar(15);
 box symbol str(5);
+a = 'C';
+c = "hola";
+x = true;
+z = false;
 }
 

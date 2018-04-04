@@ -97,7 +97,18 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
                                             RESULT= tmp;
                                         }
                                         :} 
-            | nAssignation nInside_Repeat 
+            | nAssignation:a nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=a;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) a);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :} 
             | nIf nInside_Repeat 
             | nFor nInside_Repeat
             | nCicle nInside_Repeat
@@ -127,7 +138,7 @@ nOptional ::= nOutside | ;
 nOutside ::= nFunc nOutside_Repeat
             |nVoid nOutside_Repeat
             |nTypes:t {: RESULT=t; :} nOutside_Repeat
-            |nAssignation nOutside_Repeat
+            |nAssignation:a {: RESULT=a; :} nOutside_Repeat
             | nCommetary nOutside_Repeat;
 
 nOutside_Repeat ::= nOutside | ;
@@ -512,13 +523,23 @@ nBox_Assign ::= tNumberI tEndSentence
                 | tFalse tEndSentence
                 | tNumberD tEndSentence;
 //Asignacion de cualquiera tipo
-nAssignation ::= nAssignation_E2;
+nAssignation ::= nAssignation_E2:a {: RESULT=a; :};
 nAssignation_E1 ::= nOperations tEndSentence
-                    | tChar tEndSentence
-                    | tTrue tEndSentence
-                    | tFalse tEndSentence
-                    | tSentence tEndSentence;
-nAssignation_E2 ::= tId tAssign nAssignation_E1
+                    | tChar:c tEndSentence {: RESULT=c; :}
+                    | tTrue:t tEndSentence {: RESULT=t; :}
+                    | tFalse:f tEndSentence {: RESULT=f; :}
+                    | tSentence:s tEndSentence {: 
+                                                String val = s.toString().replaceAll("\"", "");
+                                                RESULT= val; :};
+nAssignation_E2 ::= tId:i tAssign:a nAssignation_E1:e {:
+                                        Node n= new Node("Var_Assign");
+                                        Node n1 = new Node("ID");
+                                        n1.setValue(i.toString() + a.toString() + e.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node) n1);
+                                        RESULT=n;
+                                        :}
                     | tId tParOpen nVal_Box tParClose tAssign nBox_Assign
                     | error {:parser.report_error("Error de asignacion","Error");:} nAssignation_E1
                     | tId error {:parser.report_error("Error de asignacion","Error");:} nBox_Assign;
