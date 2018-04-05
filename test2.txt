@@ -1,70 +1,64 @@
 main(){
-int x= 2, z=2;
-dec z, z1=2.2, x;
-bool w=true, x= false;
-word z, w="a";
-symbol x='A' , z;
+word x= "hola", d= "B";
+bool z=true, q=false;
+int xz;
+symbol c1 = 'B', c2='W';
+int r1 = 1, r2 = 3;
 
-box int xx(1);
-box dec xx.assign(1.1,2.2,3.3);
-z=2;
-z(2) =2;
-
-if (x==1) {
-    hola=1;
+if(a<=b){
+    int c = 4;
 }else{
-    est = 's';
-}
-
-for(a to 2 ;x){
-    c=2;
-    if(x>=1){
-        est = 's';
+    if(r1>=1 || q==true){
+        xz = true;
     }
 }
-cicle(z > 2){
-    for(a to 2 ;x){
-    c=2;
-    if(x>=1){
-        est = 's';
-    }
-}
-}
-$termino
-$*swap(zz){
-    is(55){
-        if(a!=b && b>=4 || c==true){
-            x= 15 + j + i;
-            box symbol array.assign('A', 'b', 'c');
-            box int array.assign(1, 2, 3, 4);
-            box dec array.assign(1.1, 2.2, 33.3);
+box word val(15);
+for(1 to 10 ; j){
+        for(1 to 10 ; i){
+          arr(i)=j;
         }
-    }
+}
+cicle(n>=10){
+    int x = 0;
+    for(1 to 10 ; i){
+          x(i)=55;
+        }
+}
+swap(x){
+    is('A'){
+        a = false;
+    }	
     is('B'){
-        if(z==1){
-            vv= 00;
-        }
+        a = true;
     }
     default{
-        x=0;
-    }
-}*$
-metodo2 [b, c, c];
+        z='B';
+    }  
 }
-
-func int metodo (int b, word x, int c, symbol z, dec g, bool t){
+  metodo[1,"hola"];
+    
+}
+func int metodo(int b, word x, int c){
+    int a = 155;
     box bool array.assign(true, false, true);
-    ll(1) = 1.2;
-    $termino
     lw(4) = 155;
-    return 0;
+    return 1;
+}
+func int metodo(int b, word x, int c){
+    int a = 155;
+    box bool array.assign(true, false, true);
+    lw(4) = 155;
+    metodo[1,"hola",9];
+    return 1;
 }
 void metodo1(int b, word x, int c, symbol z, dec g, bool t){
     box bool array.assign(true, false, true);
     lw(4) = 155;
 }
-void metodo2(int b){
-    metodo2[b, c, 1];
-    $termino
+void metodo2(int b, word x){
+    for(1 to 10 ; j){
+        for(1 to 10 ; i){
+          arr(i)=j;
+        }
 }
-$termino
+}

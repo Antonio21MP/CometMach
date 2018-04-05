@@ -94,7 +94,8 @@ nCometMach ::= nMain:m nOptional:o {:
                                             System.out.println("Document OK");
                                             RESULT=tmp;
                                         }
-                                             :};
+                                             :}
+                |error {:parser.report_error("Error en la sintaxis","Error"); :} nMain nOptional;
 
 nMain ::= tMain tParOpen tParClose tInit 
 {:System.out.println("---Main Begin---");:} nInside:i tEnd {:
@@ -233,7 +234,18 @@ nOutside ::= nFunc:f nOutside_Repeat:r {:
                                             RESULT= tmp;
                                         }
                                         :}
-            |nCommetary nOutside_Repeat;
+            |nCommetary:c nOutside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=c;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) c);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}; 
 
 nOutside_Repeat ::= nOutside:o {: RESULT=o; :} | {:
                                                 Node tmp = new Node("vacio");
@@ -246,7 +258,10 @@ nTypes ::= nInt:i {: RESULT=i; :}
             | nSym:s {: RESULT=s; :} 
             | nBool:b {: RESULT=b; :};
 
-nCommetary ::= tCommentary;
+nCommetary ::= tCommentary:t {:Node n = new Node("Comentario");
+                                //n.setValue(t.toString());
+                                n.setNodeNum(parser.counter++);
+                                RESULT=n;:};
 
 nInt ::= nInt_Decl:i {: RESULT=i; :};
 nDec ::= nDec_Decl:d {: RESULT=d; :};
@@ -658,7 +673,7 @@ nAssignation_E2 ::= tId:i tAssign:a nAssignation_E1:e {:
 //Operaciones
 
 //Sentencias de operaciones dentro del if y cicle
-nSentences ::= nSentences_E1:s {: System.out.println("Sentencia"); RESULT=s; :};
+nSentences ::= nSentences_E1:s {: RESULT=s; :};
 nSentences_E1 ::=nCompObjects:ob tComparative:c nCompObjects:ob2 {:
                                                 Node n = new Node(c.toString());
                                                 Node n1 = new Node("Val");
@@ -789,7 +804,18 @@ nList_DI ::= nIf:i nList_DI_Repeat:r {:
                                         tmp.setNodeNum(parser.counter++);
                                         RESULT= tmp;
                                     } :}
-            | nCommetary nList_DI_Repeat;
+            | nCommetary:c nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=c;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) c);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :};
 
 nList_DI_Repeat ::= nList_DI:i {: RESULT=i; :} | {:
                                                 Node tmp = new Node("vacio");
@@ -802,7 +828,7 @@ nInside_If ::= tInit nList_DI:l tEnd {:
                                         Node n= new Node("Inside_If");
                                         n.setNodeNum(parser.counter++);
                                         n.addChild((Node) l);
-                                        System.out.println("en Inside_if 1");
+                                        //System.out.println("en Inside_if 1");
                                         RESULT=n;:}
                 |tInit nList_DI:l1 tEnd tElse tInit nList_DI:l2 tEnd{:
                                                                     
@@ -816,7 +842,7 @@ nInside_If ::= tInit nList_DI:l tEnd {:
                                                                     n.setNodeNum(parser.counter++);
                                                                     n.addChild((Node) nif);
                                                                     n.addChild((Node) nelse);
-                                                                    System.out.println("en Inside_if 2");
+                                                                    //System.out.println("en Inside_if 2");
                                                                     RESULT = n; :};
 nIf_E1 ::= tParOpen:po nInsideComp:ic tParClose:pc nInside_If:nif {:
                                                                     
@@ -824,13 +850,13 @@ nIf_E1 ::= tParOpen:po nInsideComp:ic tParClose:pc nInside_If:nif {:
                                                                     n.setNodeNum(parser.counter++);
                                                                     n.addChild((Node) ic);
                                                                     n.addChild((Node) nif);
-                                                                    System.out.println("en condition nif_e1");
+                                                                    //System.out.println("en condition nif_e1");
                                                                     RESULT = n; 
                                                                     :};
 nIf_E2 ::= tIf:nif nIf_E1:i {:
                             
                             Node n = new Node("If");
-                            System.out.println("en condition nif_e2 ");
+                            //System.out.println("en condition nif_e2 ");
                             Node n1 = new Node("Type");
                             n1.setValue(nif.toString()); 
                             n1.setNodeNum(parser.counter++);
@@ -1187,7 +1213,18 @@ nList_Func ::= nIf:i nList_Func_Repeat:r {:
                                         tmp.setNodeNum(parser.counter++);
                                         RESULT= tmp;
                                     } :}
-            | nCommetary nList_Func_Repeat;
+            | nCommetary:c nList_Func_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=c;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) c);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :};
 
 nList_Func_Repeat ::= nList_Func:i {: RESULT=i; :} | {:
                                                 Node tmp = new Node("vacio");
