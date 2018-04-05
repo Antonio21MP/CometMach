@@ -4,29 +4,13 @@ bool z=true, q=false;
 int xz;
 symbol c1 = 'B', c2='W';
 int r1 = 1, r2 = 3;
-box bool array.assign(true, false, true);
-box bool arr(122);
-box int arr3(45);
-box int arr4.assign(1, 2, 3, 4);
-box dec dr4.assign(4.4, 2.1, 7.5, 5.0);
-box dec arr23(54);
-box word wr.assign("hola", "mundo", "q");
-box word warr(54);
-box symbol sr.assign('A', 'B', 'C');
-box symbol sar(15);
-box symbol str(5);
-a = 'C';
-c = "hola";
-x = true;
-z = false;
-w= 1;
-q = 2.2;
-r = bb;
-c(12) = 22;
-t(0) = 2.2;
-y(1) = 'B';
-u(8) = "hola";
-ee(3) = true;
-y1(16) = false;
+
+if(a<=b){
+    int c = 4;
+}else{
+    if(r1>=1 || q==true){
+        xz = true;
+    }
+}
 }
 

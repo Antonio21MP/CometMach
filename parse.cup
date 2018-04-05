@@ -6,6 +6,7 @@ parser code
     public String result = "";
     public Node root;
     public int counter = 1;
+    
     public void syntax_error(Symbol s){
 		report_error("ERROR DE SINTAXIS -- Columna: " + s.right + " Fila: " + s.left + ". En: \"" + s.value + "\"", null);
 	}
@@ -109,7 +110,18 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
                                             RESULT= tmp;
                                         }
                                         :} 
-            | nIf nInside_Repeat 
+            | nIf:i nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=i;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) i);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nFor nInside_Repeat
             | nCicle nInside_Repeat
             | nSwap nInside_Repeat
@@ -560,26 +572,78 @@ nAssignation_E2 ::= tId:i tAssign:a nAssignation_E1:e {:
 //Operaciones
 
 //Sentencias de operaciones dentro del if y cicle
-nSentences ::= nSentences_E1;
-nSentences_E1 ::=nCompObjects tComparative nCompObjects;
+nSentences ::= nSentences_E1:s {: System.out.println("Sentencia"); RESULT=s; :};
+nSentences_E1 ::=nCompObjects:ob tComparative:c nCompObjects:ob2 {:
+                                                Node n = new Node(c.toString());
+                                                Node n1 = new Node("Val");
+                                                Node n2 = new Node("Val");
+                                                n1.setValue(ob.toString());
+                                                n2.setValue(ob2.toString());
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n.setNodeNum(parser.counter++);
+                                                n.addChild((Node) n1);
+                                                n.addChild((Node) n2);
+                                                RESULT = n;
+                                                :};
 
 //Operadores Logicos
-nLogicalOpe ::= tAnd 
-                | tOr;
+nLogicalOpe ::= tAnd:a {:RESULT=a;:}
+                | tOr:o {:RESULT=o;:};
 //Sentencias usadas en varios lugares
-nCompObjects ::= tId 
-                |tNumberI
-                |tNumberD
-                |tTrue
-                |tFalse;
+nCompObjects ::= tId:i {:RESULT=i;:}
+                |tNumberI:ni {:RESULT=ni;:}
+                |tNumberD:nd {:RESULT=nd;:}
+                |tTrue:t {:RESULT=t;:}
+                |tFalse:f {:RESULT=f;:};
 //Sentencias para ejecutar ors y ands divididos por parentesis
-nInsideComp ::= nInsideComp_E1;
-nInsideComp_E1 ::= nSentences nLogicalOpe nInsideComp_E1
-                    | nSentences; 
+nInsideComp ::= nInsideComp_E1:s {: //System.out.println("saliendo compare ");
+                                                 RESULT = s;:};
+nInsideComp_E1 ::= nSentences:s nLogicalOpe:l nInsideComp_E1:i {:                                                
+                                                //System.out.println("llego a compare 1 ");
+                                                Node n = new Node("Operator_" + l.toString());
+                                                n.setNodeNum(parser.counter++);
+                                                n.addChild((Node) s);
+                                                n.addChild((Node) i);
+                                                RESULT = n;:}
+                    | nSentences:s {: //System.out.println("llego a compare 2 ");
+                                                 RESULT=s;:}; 
 
-nList_DI ::= nIf nList_DI_Repeat
-            | nTypes nList_DI_Repeat
-            | nAssignation nList_DI_Repeat
+nList_DI ::= nIf:i nList_DI_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=i;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) i);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nTypes:t nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=t;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) t);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :} 
+            | nAssignation:a nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=a;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) a);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nFor nList_DI_Repeat
             | nCicle nList_DI_Repeat
             | nSwap nList_DI_Repeat
@@ -587,13 +651,55 @@ nList_DI ::= nIf nList_DI_Repeat
             | nCallMethod nList_DI_Repeat
             | nCommetary nList_DI_Repeat;
 
-nList_DI_Repeat ::= nList_DI | ;
+nList_DI_Repeat ::= nList_DI:i {: RESULT=i; :} | {:
+                                                Node tmp = new Node("vacio");
+                                                RESULT= tmp; 
+                                                :};
 //Gramatica de if
-nIf ::= nIf_E2;
-nInside_If ::= tInit nList_DI tEnd
-                |tInit nList_DI tEnd tElse tInit nList_DI tEnd;
-nIf_E1 ::= tParOpen nInsideComp tParClose nInside_If;
-nIf_E2 ::= tIf nIf_E1
+nIf ::= nIf_E2:i {: RESULT=i; :};
+nInside_If ::= tInit nList_DI:l tEnd {:
+                                        
+                                        Node n= new Node("Inside_If");
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node) l);
+                                        System.out.println("en Inside_if 1");
+                                        RESULT=l;:}
+                |tInit nList_DI:l1 tEnd tElse tInit nList_DI:l2 tEnd{:
+                                                                    
+                                                                    Node n = new Node("Then");
+                                                                    Node nif = new Node("Inside_If");
+                                                                    Node nelse = new Node("Inside_Else");
+                                                                    nif.addChild((Node) l1);
+                                                                    nelse.addChild((Node) l2);
+                                                                    nif.setNodeNum(parser.counter++);
+                                                                    nelse.setNodeNum(parser.counter++);
+                                                                    n.setNodeNum(parser.counter++);
+                                                                    n.addChild((Node) nif);
+                                                                    n.addChild((Node) nelse);
+                                                                    System.out.println("en Inside_if 2");
+                                                                    RESULT = n; :};
+nIf_E1 ::= tParOpen:po nInsideComp:ic tParClose:pc nInside_If:nif {:
+                                                                    
+                                                                    Node n = new Node("Condition");
+                                                                    n.setNodeNum(parser.counter++);
+                                                                    n.addChild((Node) ic);
+                                                                    n.addChild((Node) nif);
+                                                                    System.out.println("en condition nif_e1");
+                                                                    RESULT = n; 
+                                                                    :};
+nIf_E2 ::= tIf:nif nIf_E1:i {:
+                            
+                            Node n = new Node("If");
+                            System.out.println("en condition nif_e2 ");
+                            Node n1 = new Node("Type");
+                            n1.setValue(nif.toString()); 
+                            n1.setNodeNum(parser.counter++);
+                            n.setNodeNum(parser.counter++);
+                            n.addChild((Node) n1);
+                            n.addChild((Node) i);
+
+                            RESULT = n; 
+                            :}
             | tIf error {:parser.report_error("Error en declaracion de if","Error");:} nIf_E1;
 
 //Sentencias para operaciones dentro del for
