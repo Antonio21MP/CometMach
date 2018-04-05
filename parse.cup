@@ -44,7 +44,7 @@ non terminal nInsideComp, nInsideComp_E1;
 non terminal nIf, nIf_E1, nIf_E2, nInside_If;
 non terminal nList_DI, nList_DI_Repeat;
 non terminal nFor, nFor_E1, nFor_E2, nInside_For;
-non terminal nCicle, nCicle_E2, nCicle_E3, nInside_Cicle;
+non terminal nCicle, nCicle_E1, nCicle_E2, nCicle_E3, nInside_Cicle;
 non terminal nSwap, nSwap_E1, nSwap_E2, nInside_Swap;
 non terminal nIs, nIs_E1, nIs_E2, nObject_Is, nInside_Is;
 non terminal nDefault, nDefault_E1, nInside_Default;
@@ -134,7 +134,18 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
                                             RESULT= tmp;
                                         }
                                         :}
-            | nCicle nInside_Repeat
+            | nCicle:c nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=c;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) c);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nSwap nInside_Repeat
             | nBox:b nInside_Repeat:r {:
                                         String name = ((Node)r).getName(); 
@@ -668,7 +679,18 @@ nList_DI ::= nIf:i nList_DI_Repeat:r {:
                                             RESULT= tmp;
                                         }
                                         :}
-            | nCicle nList_DI_Repeat
+            | nCicle:c nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=c;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) c);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nSwap nList_DI_Repeat
             | nBox:b nList_DI_Repeat:r {:
                                         String name = ((Node)r).getName(); 
@@ -697,7 +719,7 @@ nInside_If ::= tInit nList_DI:l tEnd {:
                                         n.setNodeNum(parser.counter++);
                                         n.addChild((Node) l);
                                         System.out.println("en Inside_if 1");
-                                        RESULT=l;:}
+                                        RESULT=n;:}
                 |tInit nList_DI:l1 tEnd tElse tInit nList_DI:l2 tEnd{:
                                                                     
                                                                     Node n = new Node("Then");
@@ -766,7 +788,7 @@ nInside_For ::= tInit nList_DI:l tEnd {:
                                     Node n= new Node("Inside_For");
                                     n.setNodeNum(parser.counter++);
                                     n.addChild((Node) l);
-                                    RESULT=l;
+                                    RESULT=n;
                                     :};
 nFor_E1 ::= tParOpen nForSentence:f tParClose nInside_For:nif {:            
                                                         Node n = new Node("Range");
@@ -788,12 +810,30 @@ nFor_E2 ::= tFor:f nFor_E1:nf{:
             | tFor error {:parser.report_error("Error en declaracion de for","Error");:} nFor_E1;
 
 //Gramatica de cicle
-nCicle ::= nCicle_E3;
-nInside_Cicle ::= tInit nList_DI tEnd;
-nCicle_E3 ::= nSentences 
-                |tTrue;
-nCicle_E2 ::= tParOpen nSentences tParClose nInside_Cicle;
-nCicle_E3 ::= tCicle nCicle_E2
+nCicle ::= nCicle_E3:c {: RESULT = c; :};
+nInside_Cicle ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_Cicle");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nCicle_E2 ::= tParOpen nSentences:s tParClose nInside_Cicle:nic {:            
+                                                        Node n = new Node("Condition");
+                                                        n.setNodeNum(parser.counter++);
+                                                        n.addChild((Node) s);
+                                                        n.addChild((Node) nic);
+                                                        RESULT = n; 
+                                                        :};
+nCicle_E3 ::= tCicle:c nCicle_E2:nc {:    
+                        Node n = new Node("Cicle");
+                        Node n1 = new Node("Type");
+                        n1.setValue(c.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) nc);
+                        RESULT = n; 
+                        :}
                 |tCicle error {:parser.report_error("Error en declaracion de cicle","Error");:} nCicle_E2;
 
 //Objetos usados para is
