@@ -122,7 +122,18 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
                                             RESULT= tmp;
                                         }
                                         :}
-            | nFor nInside_Repeat
+            | nFor:f nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=f;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) f);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nCicle nInside_Repeat
             | nSwap nInside_Repeat
             | nBox:b nInside_Repeat:r {:
@@ -535,6 +546,7 @@ nBox_Assign ::= tNumberI:ni tEndSentence {: RESULT=ni;:}
                                             String val = s.toString().replaceAll("\"", "");
                                             RESULT=val; :}
                 | tFalse:f tEndSentence {: RESULT=f;:}
+                | tId:i tEndSentence{: RESULT=i;:}
                 | tNumberD:nd tEndSentence{: RESULT=nd;:};
 //Asignacion de cualquiera tipo
 nAssignation ::= nAssignation_E2:a {: RESULT=a; :};
@@ -625,7 +637,7 @@ nList_DI ::= nIf:i nList_DI_Repeat:r {:
                                         if(name.equals("vacio")){
                                             RESULT=t;      
                                         }else{
-                                            Node tmp = new Node("Inside");
+                                            Node tmp = new Node("List");
                                             tmp.addChild((Node) t);
                                             tmp.addChild((Node) r);
                                             tmp.setNodeNum(parser.counter++);
@@ -637,17 +649,39 @@ nList_DI ::= nIf:i nList_DI_Repeat:r {:
                                         if(name.equals("vacio")){
                                             RESULT=a;      
                                         }else{
-                                            Node tmp = new Node("Inside");
+                                            Node tmp = new Node("List");
                                             tmp.addChild((Node) a);
                                             tmp.addChild((Node) r);
                                             tmp.setNodeNum(parser.counter++);
                                             RESULT= tmp;
                                         }
                                         :}
-            | nFor nList_DI_Repeat
+            | nFor:f nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=f;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) f);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nCicle nList_DI_Repeat
             | nSwap nList_DI_Repeat
-            | nBox nList_DI_Repeat
+            | nBox:b nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=b;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) b);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nCallMethod nList_DI_Repeat
             | nCommetary nList_DI_Repeat;
 
@@ -703,18 +737,54 @@ nIf_E2 ::= tIf:nif nIf_E1:i {:
             | tIf error {:parser.report_error("Error en declaracion de if","Error");:} nIf_E1;
 
 //Sentencias para operaciones dentro del for
-nForSentence ::= nForSentence_E1;
-nForSentence_E1 ::= nForObjectOptions tTo nForObjectOptions tEndSentence tId;
+nForSentence ::= nForSentence_E1:f {:RESULT=f;:};
+nForSentence_E1 ::= nForObjectOptions:fo1 tTo nForObjectOptions:fo2 tEndSentence tId:i {:
+                                                                    Node n = new Node("To");
+                                                                    Node n1 = new Node("Val");
+                                                                    Node n2 = new Node("Val");
+                                                                    Node n3 = new Node("ID");
+                                                                    n1.setValue(fo1.toString());
+                                                                    n2.setValue(fo2.toString());
+                                                                    n3.setValue(i.toString());
+                                                                    n1.setNodeNum(parser.counter++);
+                                                                    n2.setNodeNum(parser.counter++);
+                                                                    n3.setNodeNum(parser.counter++);
+                                                                    n.setNodeNum(parser.counter++);
+                                                                    n.addChild((Node) n1);
+                                                                    n.addChild((Node) n2);
+                                                                    n.addChild((Node) n3);
+                                                                    RESULT=n;
+                                                                    :};
 
 //Objetos usados dentro de la operacion del for
-nForObjectOptions ::= tNumberD
-                        |tNumberI
-                        |tId;
+nForObjectOptions ::= tNumberD:nd {:RESULT=nd;:}
+                        |tNumberI:ni {:RESULT=ni;:}
+                        |tId:i {:RESULT=i;:};
 //Gramatica de for
-nFor ::= nFor_E2;
-nInside_For ::= tInit nList_DI tEnd;
-nFor_E1 ::= tParOpen nForSentence tParClose nInside_For; 
-nFor_E2 ::= tFor nFor_E1
+nFor ::= nFor_E2:f {:RESULT=f;:};
+nInside_For ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_For");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=l;
+                                    :};
+nFor_E1 ::= tParOpen nForSentence:f tParClose nInside_For:nif {:            
+                                                        Node n = new Node("Range");
+                                                        n.setNodeNum(parser.counter++);
+                                                        n.addChild((Node) f);
+                                                        n.addChild((Node) nif);
+                                                        RESULT = n; 
+                                                        :}; 
+nFor_E2 ::= tFor:f nFor_E1:nf{:    
+                        Node n = new Node("For");
+                        Node n1 = new Node("Type");
+                        n1.setValue(f.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) nf);
+                        RESULT = n; 
+                        :}
             | tFor error {:parser.report_error("Error en declaracion de for","Error");:} nFor_E1;
 
 //Gramatica de cicle

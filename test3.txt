@@ -12,5 +12,12 @@ if(a<=b){
         xz = true;
     }
 }
+box word val(15);
+for(1 to 10 ; j){
+        for(1 to 10 ; i){
+          arr(i)=j;
+        }
 }
+}
+
 
