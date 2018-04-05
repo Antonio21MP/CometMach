@@ -199,7 +199,18 @@ nOptional ::= nOutside:o {:RESULT=o; :} | {:
                                             RESULT= tmp; 
                                             :};
 
-nOutside ::= nFunc nOutside_Repeat
+nOutside ::= nFunc:f nOutside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=f;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) f);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             |nVoid:v nOutside_Repeat:r {:
                                         String name = ((Node)r).getName(); 
                                         if(name.equals("vacio")){
@@ -1057,22 +1068,116 @@ nParam_E3 ::= nVP_Types:v tId:i nParam_E2:p {:
                                     :};
 
 // Gramatica de lista de objetos que contiene solo func
-nList_Func ::= nIf nList_Func_Repeat
-            | nTypes nList_Func_Repeat
-            | nAssignation nList_Func_Repeat
-            | nFor nList_Func_Repeat
-            | nCicle nList_Func_Repeat
-            | nSwap nList_Func_Repeat
-            | nBox nList_Func_Repeat
-            | nReturn nList_Func_Repeat
+nList_Func ::= nIf:i nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=i;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) i);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nTypes:t nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=t;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) t);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nAssignation:a nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=a;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) a);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nFor:f nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=f;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) f);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nCicle:c nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=c;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) c);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nSwap:s nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=s;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) s);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nBox:b nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=b;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) b);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nReturn:t nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=t;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) t);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
             | nCallMethod nList_Func_Repeat
             | nCommetary nList_Func_Repeat;
 
-nList_Func_Repeat ::= nList_Func | ;
+nList_Func_Repeat ::= nList_Func:i {: RESULT=i; :} | {:
+                                                Node tmp = new Node("vacio");
+                                                RESULT= tmp; 
+                                                :};
 
 
 //Gramatica de return
-nReturn ::= tReturn nAssignation_E1;
+nReturn ::= tReturn:t nAssignation_E1:a {:
+                                        Node tmp = new Node("Return");
+                                        Node n1 = new Node("Type");
+                                        Node n2 = new Node("Val");
+                                        n1.setValue(t.toString());
+                                        n2.setValue(a.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n2.setNodeNum(parser.counter++);
+                                        tmp.setNodeNum(parser.counter++);
+                                        tmp.addChild((Node) n1);
+                                        tmp.addChild((Node) n2);
+                                        RESULT= tmp;:};
 
 //asignacion de valores por parametro
 nParam_Value ::= tId
@@ -1097,10 +1202,38 @@ nCallMethod_E2 ::= tId tStapleOpen tStapleClose tEndSentence
                     |tId tStapleOpen error {:parser.report_error("Error en llamada de metodos","Error");:} nCallMethod_E1 tStapleClose tEndSentence;
 
 //Gramatica func
-nFunc ::= nFunc_E2;
-nInside_Func ::= tInit nList_Func tEnd;
-nFunc_E1 ::= tParOpen nParam tParClose nInside_Func;
-nFunc_E2 ::= tFunction nVP_Types tId nFunc_E1
+nFunc ::= nFunc_E2:f {:RESULT=f;:};
+nInside_Func ::= tInit nList_Func:l tEnd{:
+                                    Node n= new Node("Inside_Func");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nFunc_E1 ::= tParOpen nParam:p tParClose nInside_Func:f {:            
+                                                    Node n = new Node("Parameters");
+                                                    n.setNodeNum(parser.counter++);
+                                                    n.addChild((Node) p);
+                                                    n.addChild((Node) f);
+                                                    RESULT = n; 
+                                                    :};
+nFunc_E2 ::= tFunction:f nVP_Types:v tId:i nFunc_E1:e {:            
+                                Node n = new Node("Func");
+                                Node n1 = new Node("Type");
+                                Node n2 = new Node("id_Type");
+                                Node n3 = new Node("id");
+                                n3.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n1.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                n1.setValue(f.toString());
+                                n2.setValue(v.toString());
+                                n3.setValue(i.toString());
+                                n.addChild((Node) n1);
+                                n.addChild((Node) n2);
+                                n.addChild((Node) n3);
+                                n.addChild((Node) e);
+                                RESULT = n; 
+                                :}
                 |tFunction {:parser.report_error("Error declaracion de funcion","Error");:} nFunc_E1;
 
 //Gramatica void
