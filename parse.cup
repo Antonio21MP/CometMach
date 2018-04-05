@@ -185,7 +185,17 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
                                             RESULT= tmp;
                                         }
                                         :}
-            | nCallMethod nInside_Repeat    
+            | nCallMethod:c nInside_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=c;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) c);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}    
             | nCommetary nInside_Repeat
             ;
 
@@ -768,7 +778,17 @@ nList_DI ::= nIf:i nList_DI_Repeat:r {:
                                             RESULT= tmp;
                                         }
                                         :}
-            | nCallMethod nList_DI_Repeat
+            | nCallMethod:c nList_DI_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=c;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) c);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
             | nCommetary nList_DI_Repeat;
 
 nList_DI_Repeat ::= nList_DI:i {: RESULT=i; :} | {:
@@ -1156,7 +1176,17 @@ nList_Func ::= nIf:i nList_Func_Repeat:r {:
                                         tmp.setNodeNum(parser.counter++);
                                         RESULT= tmp;
                                     } :}
-            | nCallMethod nList_Func_Repeat
+            | nCallMethod:c nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=c;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) c);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
             | nCommetary nList_Func_Repeat;
 
 nList_Func_Repeat ::= nList_Func:i {: RESULT=i; :} | {:
@@ -1180,24 +1210,77 @@ nReturn ::= tReturn:t nAssignation_E1:a {:
                                         RESULT= tmp;:};
 
 //asignacion de valores por parametro
-nParam_Value ::= tId
-                |tChar
-                | tTrue
-                | tFalse
-                | tSentence
-                | tNumberD
-                | tNumberI;
-nAssign_Method ::= nAssign_Method_E3;
-nAssign_Method_E1 ::= nParam_Value nAssign_Method_E2
-                        | nParam_Value; 
-nAssign_Method_E2 ::= tComma nAssign_Method_E1;
-nAssign_Method_E3 ::= nParam_Value nAssign_Method_E2
-                        |nParam_Value;
+nParam_Value ::= tId:i {:RESULT=i;:}
+                |tChar:c {:RESULT=c;:}
+                | tTrue:t {:RESULT=t;:}
+                | tFalse:f {:RESULT=f;:}
+                | tSentence:s {:String val = s.toString().replaceAll("\"", "");
+                                            RESULT=val;:}
+                | tNumberD:nd {:RESULT=nd;:}
+                | tNumberI:ni {:RESULT=ni;:};
+nAssign_Method ::= nAssign_Method_E3:a {:RESULT=a;:};
+nAssign_Method_E1 ::= nParam_Value:v nAssign_Method_E2:a {:
+                                                    Node n = new Node("Param");
+                                                    Node n1 = new Node("Val");
+                                                    n1.setValue(v.toString());
+                                                    n1.setNodeNum(parser.counter++);
+                                                    n.setNodeNum(parser.counter++);
+                                                    n.addChild((Node)n1);
+                                                    n.addChild((Node)a);
+                                                    RESULT=n;
+                                                    :}
+                        | nParam_Value:v {:
+                                        Node n = new Node("Param");
+                                        Node n1 = new Node("Val");
+                                        n1.setValue(v.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node)n1);
+                                        RESULT=n;
+                                        :}; 
+nAssign_Method_E2 ::= tComma nAssign_Method_E1:a {:
+                                                RESULT=a;
+                                                :};
+nAssign_Method_E3 ::= nParam_Value:v nAssign_Method_E2:a {:
+                                                    Node n = new Node("Param");
+                                                    Node n1 = new Node("Val");
+                                                    n1.setValue(v.toString());
+                                                    n1.setNodeNum(parser.counter++);
+                                                    n.setNodeNum(parser.counter++);
+                                                    n.addChild((Node)n1);
+                                                    n.addChild((Node)a);
+                                                    RESULT=n;
+                                                    :}
+                        |nParam_Value:v {:
+                                        Node n = new Node("Param");
+                                        Node n1 = new Node("Val");
+                                        n1.setValue(v.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node)n1);
+                                        RESULT=n;
+                                        :};
 //Llamada de metodo
-nCallMethod ::= nCallMethod_E2;
-nCallMethod_E1 ::= nAssign_Method;
-nCallMethod_E2 ::= tId tStapleOpen tStapleClose tEndSentence
-                    |tId tStapleOpen nCallMethod_E1 tStapleClose tEndSentence
+nCallMethod ::= nCallMethod_E2:c {:RESULT=c;:};
+nCallMethod_E1 ::= nAssign_Method:a {:RESULT=a;:};
+nCallMethod_E2 ::= tId:i tStapleOpen:so tStapleClose:sc tEndSentence {:Node n = new Node("Method");
+                                        Node n1 = new Node("Id");
+                                        n1.setValue(i.toString() + so.toString() + sc.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node)n1);
+                                        RESULT=n;
+                                        :}
+                    |tId:i tStapleOpen nCallMethod_E1:c tStapleClose tEndSentence {:
+                                        Node n = new Node("Method");
+                                        Node n1 = new Node("Id");
+                                        n1.setValue(i.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node)n1);
+                                        n.addChild((Node)c);
+                                        RESULT=n;
+                                        :}
                     |tId error {:parser.report_error("Error en llamada de metodos","Error");:} tEndSentence
                     |tId tStapleOpen error {:parser.report_error("Error en llamada de metodos","Error");:} nCallMethod_E1 tStapleClose tEndSentence;
 

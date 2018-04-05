@@ -35,7 +35,8 @@ swap(x){
         z='B';
     }  
 }
-  
+  metodo[1,"hola"];
+    
 }
 func int metodo(int b, word x, int c){
     int a = 155;
@@ -47,6 +48,7 @@ func int metodo(int b, word x, int c){
     int a = 155;
     box bool array.assign(true, false, true);
     lw(4) = 155;
+    metodo[1,"hola",9];
     return 1;
 }
 void metodo1(int b, word x, int c, symbol z, dec g, bool t){
