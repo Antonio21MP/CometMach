@@ -37,4 +37,15 @@ swap(x){
 }
   
 }
+void metodo1(int b, word x, int c, symbol z, dec g, bool t){
+    box bool array.assign(true, false, true);
+    lw(4) = 155;
+}
+void metodo2(int b, word x){
+    for(1 to 10 ; j){
+        for(1 to 10 ; i){
+          arr(i)=j;
+        }
+}
+}
 
