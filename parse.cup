@@ -146,7 +146,18 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
                                             RESULT= tmp;
                                         }
                                         :}
-            | nSwap nInside_Repeat
+            | nSwap:s nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=s;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) s);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nBox:b nInside_Repeat:r {:
                                         String name = ((Node)r).getName(); 
                                         if(name.equals("vacio")){
@@ -159,7 +170,7 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
                                             RESULT= tmp;
                                         }
                                         :}
-            | nCallMethod nInside_Repeat
+            | nCallMethod nInside_Repeat    
             | nCommetary nInside_Repeat
             ;
 
@@ -171,9 +182,7 @@ nInside_Repeat ::= nInside:i {: RESULT=i; :} | {:
 nOptional ::= nOutside | ;
 nOutside ::= nFunc nOutside_Repeat
             |nVoid nOutside_Repeat
-            |nTypes:t {: RESULT=t; :} nOutside_Repeat
-            |nAssignation:a {: RESULT=a; :} nOutside_Repeat
-            | nCommetary nOutside_Repeat;
+            |nCommetary nOutside_Repeat;
 
 nOutside_Repeat ::= nOutside | ;
 
@@ -691,7 +700,18 @@ nList_DI ::= nIf:i nList_DI_Repeat:r {:
                                             RESULT= tmp;
                                         }
                                         :}
-            | nSwap nList_DI_Repeat
+            | nSwap:s nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=s;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) s);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
             | nBox:b nList_DI_Repeat:r {:
                                         String name = ((Node)r).getName(); 
                                         if(name.equals("vacio")){
@@ -837,30 +857,105 @@ nCicle_E3 ::= tCicle:c nCicle_E2:nc {:
                 |tCicle error {:parser.report_error("Error en declaracion de cicle","Error");:} nCicle_E2;
 
 //Objetos usados para is
-nObject_Is ::= tNumberI
-                | tChar;
+nObject_Is ::= tNumberI:ni {: RESULT = ni; :} 
+                | tChar:c {: RESULT = c; :};
 
 //Gramatica de is
-nIs ::= nIs_E2;
-nInside_Is ::= tInit nList_DI tEnd;
-nIs_E1 ::= tParOpen nObject_Is tParClose nInside_Is;
-nIs_E2 ::= tIs nIs_E1
+nIs ::= nIs_E2:i {: RESULT = i; :};
+nInside_Is ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_Is");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nIs_E1 ::= tParOpen nObject_Is:o tParClose nInside_Is:ni {:            
+                                                        Node n = new Node("Condition");
+                                                        Node n1 = new Node("Val");
+                                                        n1.setNodeNum(parser.counter++);
+                                                        n.setNodeNum(parser.counter++);
+                                                        n1.setValue(o.toString());
+                                                        n.addChild((Node) n1);
+                                                        n.addChild((Node) ni);
+                                                        RESULT = n; 
+                                                        :};
+nIs_E2 ::= tIs:i nIs_E1:ni {:    
+                        Node n = new Node("Is");
+                        Node n1 = new Node("Type");
+                        n1.setValue(i.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) ni);
+                        RESULT = n; 
+                        :}
             | tIs error {:parser.report_error("Error en declaracion de is de swap","Error");:} nIs_E1;
 
 //Repeticion de gramatica de is
-nList_Is ::= nIs nList_Is_Repeat;
-nList_Is_Repeat ::= nList_Is | ;
+nList_Is ::= nIs:i nList_Is_Repeat:r {:
+                                String name = ((Node)r).getName(); 
+                                if(name.equals("vacio")){
+                                    RESULT=i;      
+                                }else{
+                                    Node tmp = new Node("List");
+                                    tmp.addChild((Node) i);
+                                    tmp.addChild((Node) r);
+                                    tmp.setNodeNum(parser.counter++);
+                                    RESULT= tmp;
+                                }
+                                :};
+nList_Is_Repeat ::= nList_Is:i {: RESULT=i; :} | {:
+                                                Node tmp = new Node("vacio");
+                                                RESULT= tmp; 
+                                                :};
 
 //Gramatica de default
-nDefault ::= nDefault_E1;
-nInside_Default ::= tInit nList_DI tEnd;
-nDefault_E1 ::= tDefault nInside_Default;
+nDefault ::= nDefault_E1:d {: RESULT = d; :};
+nInside_Default ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_Default");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nDefault_E1 ::= tDefault:d nInside_Default:nd {:    
+                        Node n = new Node("Default");
+                        Node n1 = new Node("Type");
+                        n1.setValue(d.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) nd);
+                        RESULT = n; 
+                        :};
 
 //Gramatica de swap
-nSwap ::= nSwap_E2;
-nInside_Swap ::= tInit nList_Is nDefault tEnd;
-nSwap_E1 ::= tParOpen tId tParClose nInside_Swap; 
-nSwap_E2 ::= tSwap nSwap_E1
+nSwap ::= nSwap_E2:s {: RESULT = s; :};
+nInside_Swap ::= tInit nList_Is:l nDefault:d tEnd {:
+                                    Node n= new Node("Inside_Swap");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    n.addChild((Node) d);
+                                    RESULT=n;
+                                    :};
+nSwap_E1 ::= tParOpen tId:i tParClose nInside_Swap:ns {:            
+                                                Node n = new Node("Condition");
+                                                Node n1 = new Node("Val");
+                                                n1.setNodeNum(parser.counter++);
+                                                n.setNodeNum(parser.counter++);
+                                                n1.setValue(i.toString());
+                                                n.addChild((Node) n1);
+                                                n.addChild((Node) ns);
+                                                RESULT = n; 
+                                                :}; 
+nSwap_E2 ::= tSwap:s nSwap_E1:ns {:    
+                        Node n = new Node("Swap");
+                        Node n1 = new Node("Type");
+                        n1.setValue(s.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) ns);
+                        RESULT = n; 
+                        :}
             | tSwap error {:parser.report_error("Error en declaracion de swap","Error");:} nSwap_E1;
 
 //Gramatica de tipos para func y parametros

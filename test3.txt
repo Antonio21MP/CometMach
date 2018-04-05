@@ -24,5 +24,17 @@ cicle(n>=10){
           x(i)=55;
         }
 }
+swap(x){
+    is('A'){
+        a = false;
+    }	
+    is('B'){
+        a = true;
+    }
+    default{
+        z='B';
+    }  
+}
+  
 }
 
