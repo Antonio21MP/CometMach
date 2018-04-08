@@ -1,0 +1,5 @@
+digram G {node[shape=box, style=filled, color=blanchedalmod]; edge[color=chocolate3]; rankdir=UD 
+
+" 20_Main =   " -> " 19_Inside =  " 19_Inside =   " -> " 11_Declaration = wordcometmach.Node@677327b6" 11_Declaration = wordcometmach.Node@677327b6 " -> " 10_Type = word" 11_Declaration = wordcometmach.Node@677327b6 " -> " 9_ID =  " 9_ID =   " -> " 7_ID =  " 7_ID =   " -> " 5_ID =  " 5_ID =   " -> " 3_ID =  " 3_ID =   " -> " 1_id = x = 2" 3_ID =   " -> " 2_id = e" 5_ID =   " -> " 4_id = e2" 7_ID =   " -> " 6_id = c" 9_ID =   " -> " 8_id = d = hola" 19_Inside =   " -> " 18_Declaration = boolcometmach.Node@14ae5a5" 18_Declaration = boolcometmach.Node@14ae5a5 " -> " 17_Type = bool" 18_Declaration = boolcometmach.Node@14ae5a5 " -> " 16_ID =  " 16_ID =   " -> " 14_ID =  " 14_ID =   " -> " 12_id = z = true" 14_ID =   " -> " 13_id = q = false" 16_ID =   " -> " 15_id = w
+
+}

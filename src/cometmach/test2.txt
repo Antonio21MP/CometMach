@@ -1,0 +1,64 @@
+main(){
+word x= "hola", d= "B";
+bool z=true, q=false;
+int xz;
+symbol c1 = 'B', c2='W';
+int r1 = 1, r2 = 3;
+
+if(a<=b){
+    int c = 4;
+}else{
+    if(r1>=1 || q==true){
+        xz = true;
+    }
+}
+box word val(15);
+for(1 to 10 ; j){
+        for(1 to 10 ; i){
+          arr(i)=j;
+        }
+}
+cicle(n>=10){
+    int x = 0;
+    for(1 to 10 ; i){
+          x(i)=55;
+        }
+}
+swap(x){
+    is('A'){
+        a = false;
+    }	
+    is('B'){
+        a = true;
+    }
+    default{
+        z='B';
+    }  
+}
+  metodo[1,"hola"];
+    
+}
+func int metodo(int b, word x, int c){
+    int a = 155;
+    box bool array.assign(true, false, true);
+    lw(4) = 155;
+    return 1;
+}
+func int metodo(int b, word x, int c){
+    int a = 155;
+    box bool array.assign(true, false, true);
+    lw(4) = 155;
+    metodo[1,"hola",9];
+    return 1;
+}
+void metodo1(int b, word x, int c, symbol z, dec g, bool t){
+    box bool array.assign(true, false, true);
+    lw(4) = 155;
+}
+void metodo2(int b, word x){
+    for(1 to 10 ; j){
+        for(1 to 10 ; i){
+          arr(i)=j;
+        }
+}
+}
