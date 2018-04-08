@@ -1,0 +1,1344 @@
+package cometmach;
+import java_cup.runtime.*;
+
+parser code
+{:
+    public String result = "";
+    public Node root;
+    public int counter = 1;
+    
+    public void syntax_error(Symbol s){
+		report_error("ERROR DE SINTAXIS -- Columna: " + s.right + " Fila: " + s.left + ". En: \"" + s.value + "\"", null);
+	}
+    
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception 
+    {
+        //report_fatal_error("Fatal Error: " + s.value, null);
+    }
+
+:}
+
+terminal tTrue, tFalse, tIf, tAssign, tOr, tAnd, tComparative, tElseif, tElse, tSwap, tIs;
+terminal tThen, tClose, tDefault, tFor, tParOpen, tParClose, tTo, tEnd, tMain;
+terminal tCicle, tBox, tBoxAssing, tFunction, tVoid, tReturn;
+terminal tInit, tInteger, tDecimal, tWord,  tSymbol, tBoolean;
+terminal tId, tStapleOpen, tStapleClose, tComma, tAdd, tSub, tMulti, tDiv, tEndSentence;
+terminal String tSentence, tNumberI, tNumberD, tChar;
+
+non terminal nTypes;
+non terminal nInt, nInt_Decl, nInt_Decl_E1, nInt_Decl_E2, nInt_Decl_E3, nInt_Decl_E4;
+non terminal nSym, nSym_Decl, nSym_Decl_E1, nSym_Decl_E2, nSym_Decl_E3, nSym_Decl_E4;
+non terminal nWord, nWord_Decl, nWord_Decl_E1, nWord_Decl_E2,
+             nWord_Decl_E3, nWord_Decl_E4;
+non terminal nDec, nDec_Decl, nDec_Decl_E1, nDec_Decl_E2,
+             nDec_Decl_E3, nDec_Decl_E4;
+non terminal nBool, nBool_Decl, nBool_Decl_E1, nBool_Decl_E2,
+             nBool_Decl_E3, nBool_Decl_E4, nBool_Decl_E5;
+non terminal nAssignation, nAssignation_E1, nAssignation_E2;
+non terminal nOperations, nOperations_E1,nOperations_E2,nOperations_E3;
+non terminal nSentences, nSentences_E1, nCompObjects;
+non terminal nLogicalOpe;
+non terminal nForSentence, nForSentence_E1;
+non terminal nForObjectOptions;
+non terminal nInsideComp, nInsideComp_E1; 
+non terminal nIf, nIf_E1, nIf_E2, nInside_If;
+non terminal nList_DI, nList_DI_Repeat;
+non terminal nFor, nFor_E1, nFor_E2, nInside_For;
+non terminal nCicle, nCicle_E1, nCicle_E2, nCicle_E3, nInside_Cicle;
+non terminal nSwap, nSwap_E1, nSwap_E2, nInside_Swap;
+non terminal nIs, nIs_E1, nIs_E2, nObject_Is, nInside_Is;
+non terminal nDefault, nDefault_E1, nInside_Default;
+non terminal nList_Is, nList_Is_Repeat;
+non terminal nMain, nInside, nInside_Repeat;
+non terminal nBox, nBox_E1, nBox_E2, nBox_EB, nBox_EI, nBox_ED, nBox_EW, nBox_ES;
+non terminal nBox_Assign_Int, nBox_Assign_Int_E1, nBox_Assign_Int_E2, nBox_Assign_Int_E3; 
+non terminal nBox_Assign_Dec, nBox_Assign_Dec_E1, nBox_Assign_Dec_E2, nBox_Assign_Dec_E3; 
+non terminal nBox_Assign_Bool, nBox_Assign_Bool_E1, nBox_Assign_Bool_E2, nBox_Assign_Bool_E3, nBool_Types;
+non terminal nBox_Assign_Word, nBox_Assign_Word_E1, nBox_Assign_Word_E2, nBox_Assign_Word_E3; 
+non terminal nBox_Assign_Sym, nBox_Assign_Sym_E1, nBox_Assign_Sym_E2, nBox_Assign_Sym_E3;
+non terminal nVal_Box, nBox_Assign;
+non terminal nOutside, nOutside_Repeat, nOptional;
+non terminal nFunc, nFunc_E1, nFunc_E2, nInside_Func, nList_Func, nList_Func_Repeat, nReturn;
+non terminal nVoid, nVoid_E1, nVoid_E2, nInside_Void;
+non terminal nParam, nParam_E1, nParam_E2, nParam_E3, nVP_Types;
+non terminal nCallMethod, nCallMethod_E1, nCallMethod_E2; 
+non terminal nAssign_Method, nAssign_Method_E1, nAssign_Method_E2, nAssign_Method_E3;
+non terminal nParam_Value;
+non terminal nCometMach;
+non terminal nId, nIds, nId_E1, nId_E2;
+precedence left tAdd, tSub;
+precedence left tMulti, tDiv;
+precedence left tAnd, tOr;
+start with nCometMach;
+
+nCometMach ::= nMain:m nOptional:o {:
+                                    String name = ((Node)o).getName(); 
+                                        if(name.equals("vacio")){
+                                            Node tmp = new Node("Main");
+                                            tmp.addChild((Node) m);
+                                            tmp.setNodeNum(parser.counter++);
+                                            parser.root = (Node) tmp;
+                                            System.out.println("Document OK");
+                                            RESULT=tmp; 
+                                        }else{
+                                            Node tmp = new Node("CometMach");
+                                            Node tmp1 = new Node("Main");
+                                            Node tmp2 = new Node("Optional");
+                                            tmp1.setNodeNum(parser.counter++);
+                                            tmp2.setNodeNum(parser.counter++);
+                                            tmp.setNodeNum(parser.counter++);
+                                            tmp.addChild((Node) m);
+                                            tmp.addChild((Node) o);
+                                            parser.root = (Node) tmp;
+                                            System.out.println("Document OK");
+                                            RESULT=tmp;
+                                        }
+                                             :}
+                |error {:parser.report_error("Error en la sintaxis","Error"); :} nMain nOptional;
+
+nMain ::= tMain tParOpen tParClose tInit 
+{:System.out.println("---Main Begin---");:} nInside:i tEnd {:
+                                                            System.out.println("---Main End---");
+                                                            RESULT = i;:};
+//Repeticion dentro del main
+nInside ::= nTypes:t nInside_Repeat:r  {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=t;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) t);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :} 
+            | nAssignation:a nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=a;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) a);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :} 
+            | nIf:i nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=i;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) i);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nFor:f nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=f;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) f);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nCicle:c nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=c;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) c);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nSwap:s nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=s;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) s);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nBox:b nInside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=b;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) b);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nCallMethod:c nInside_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=c;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) c);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :};
+
+nInside_Repeat ::= nInside:i {: RESULT=i; :} | {:
+                                            Node tmp = new Node("vacio");
+                                            RESULT= tmp; 
+                                            :};
+//Repeticion fuera del main
+nOptional ::= nOutside:o {:RESULT=o; :} | {:
+                                            Node tmp = new Node("vacio");
+                                            RESULT= tmp; 
+                                            :};
+
+nOutside ::= nFunc:f nOutside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=f;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) f);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            |nVoid:v nOutside_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=v;      
+                                        }else{
+                                            Node tmp = new Node("Inside");
+                                            tmp.addChild((Node) v);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :};
+nOutside_Repeat ::= nOutside:o {: RESULT=o; :} | {:
+                                                Node tmp = new Node("vacio");
+                                                RESULT= tmp; 
+                                                :};
+
+nTypes ::= nInt:i {: RESULT=i; :} 
+            | nDec:d {: RESULT=d; :}
+            | nWord:w {: RESULT=w; :}  
+            | nSym:s {: RESULT=s; :} 
+            | nBool:b {: RESULT=b; :};
+
+nInt ::= nInt_Decl:i {: RESULT=i; :};
+nDec ::= nDec_Decl:d {: RESULT=d; :};
+nSym ::= nSym_Decl:s {: RESULT=s; :};
+nWord ::= nWord_Decl:w {: RESULT=w; :};
+nBool ::= nBool_Decl:b {: RESULT=b; :};
+//Declaracion de int para ambos casos.
+nInt_Decl ::= tInteger:i nIds:id tEndSentence {: 
+                                                Node n1 = new Node("Declaration");
+                                                Node n2 = new Node("Type");
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n2.setValue(i.toString());
+                                                n1.addChild((Node) n2);
+                                                n1.addChild((Node) id);
+                                                RESULT=n1;
+                                                :};
+
+nDec_Decl ::= tDecimal:i nIds:id tEndSentence {: 
+                                                Node n1 = new Node("Declaration");
+                                                Node n2 = new Node("Type");
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n2.setValue(i.toString());
+                                                n1.addChild((Node) n2);
+                                                n1.addChild((Node) id);
+                                                RESULT=n1;
+                                                :};
+
+nSym_Decl ::= tSymbol:i nIds:id tEndSentence {: 
+                                                Node n1 = new Node("Declaration");
+                                                Node n2 = new Node("Type");
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n2.setValue(i.toString());
+                                                n1.addChild((Node) n2);
+                                                n1.addChild((Node) id);
+                                                RESULT=n1;
+                                                :};
+
+nWord_Decl ::= tWord:i nIds:id tEndSentence {: 
+                                                Node n1 = new Node("Declaration");
+                                                Node n2 = new Node("Type");
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n2.setValue(i.toString());
+                                                n1.addChild((Node) n2);
+                                                n1.addChild((Node) id);
+                                                RESULT=n1;
+                                                :};
+nBool_Decl ::= tBoolean:i nIds:id tEndSentence {: 
+                                                Node n1 = new Node("Declaration");
+                                                Node n2 = new Node("Type");
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n2.setValue(i.toString());
+                                                n1.addChild((Node) n2);
+                                                n1.addChild((Node) id);
+                                                RESULT=n1;
+                                                :};
+
+nIds ::= nIds:i1 tComma nId:i2 {: 
+                                Node n1 = new Node("ID");
+                                n1.setNodeNum(parser.counter++);
+                                n1.addChild((Node) i1);
+                                n1.addChild((Node) i2);
+                                RESULT=n1;
+                                :}
+        |nId:i {: 
+                RESULT=i;
+                :};
+
+nId ::= nId_E1:e {: 
+                    RESULT=e;
+                :};
+
+nId_E1 ::= tId:i {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    n1.setValue(i.toString());
+                    RESULT=n1;
+                :} 
+        |tId:id tAssign tNumberI:i {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + i.toString();
+                    n1.setValue(val);
+                    RESULT=n1;
+                :}
+        |tId:id tAssign tNumberD:i {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + i.toString();
+                    n1.setValue(val);
+                    RESULT=n1;
+                :}
+        |tId:id tAssign tChar:i {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + i.toString();
+                    n1.setValue(val);
+                    RESULT=n1;
+                :}
+        |tId:id tAssign tSentence:i {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + (i.toString().replaceAll("\"", ""));
+                    n1.setValue(val);
+                    RESULT=n1;
+                :}
+        |tId:id tAssign tTrue {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + "true";
+                    n1.setValue(val);
+                    RESULT=n1;
+                :}
+        |tId:id tAssign tFalse {: 
+                    Node n1 = new Node("id");
+                    n1.setNodeNum(parser.counter++);
+                    String val = id.toString() + " = " + "false";
+                    n1.setValue(val);
+                    RESULT=n1;
+                :};
+//Asignacion de box bool
+nBox_Assign_Bool ::= nBox_Assign_Bool_E3:b {:RESULT = b;:};
+nBox_Assign_Bool_E1 ::= nBool_Types:t nBox_Assign_Bool_E2:b {: 
+                                                    String val = t.toString() + b.toString();
+                                                    RESULT= val;
+                                                    :} 
+                        | nBool_Types:t {: 
+                                        String val = t.toString();
+                                        RESULT= val;
+                                        :};
+nBox_Assign_Bool_E2 ::= tComma:c nBox_Assign_Bool_E1:b {: 
+                                                    String val = c.toString() + b.toString();
+                                                    RESULT= val;
+                                                    :};
+nBox_Assign_Bool_E3 ::= nBool_Types:t nBox_Assign_Bool_E2:b {:
+                                                         String val = t.toString() + b.toString();
+                                                         RESULT = val;
+                                                         :};
+
+//Asignaciones box int
+nBox_Assign_Int ::= nBox_Assign_Int_E3:i {:RESULT = i;:};
+nBox_Assign_Int_E1 ::=tNumberI:n nBox_Assign_Int_E2:i {: 
+                                                    String val = n.toString() + i.toString();
+                                                    RESULT= val;
+                                                    :} 
+                        | tNumberI:n {: 
+                                        String val = n.toString();
+                                        RESULT= val;
+                                        :};
+nBox_Assign_Int_E2 ::= tComma:c nBox_Assign_Int_E1:i {: 
+                                                    String val = c.toString() + i.toString();
+                                                    RESULT= val;
+                                                    :};
+nBox_Assign_Int_E3 ::=tNumberI:n nBox_Assign_Int_E2:i {:
+                                                         String val = n.toString() + i.toString();
+                                                         RESULT = val;
+                                                         :};
+
+//Asignaciones box dec
+nBox_Assign_Dec ::= nBox_Assign_Dec_E3:d {:RESULT = d;:};
+nBox_Assign_Dec_E1 ::=tNumberD:n nBox_Assign_Dec_E2:d {: 
+                                                    String val = n.toString() + d.toString();
+                                                    RESULT= val;
+                                                    :}
+                        | tNumberD:n {:  
+                                    String val = n.toString();
+                                    RESULT= val;
+                                    :};
+nBox_Assign_Dec_E2 ::= tComma:c nBox_Assign_Dec_E1:d{: 
+                                                String val = c.toString() + d.toString();
+                                                RESULT= val;
+                                                :};
+nBox_Assign_Dec_E3 ::=tNumberD:n nBox_Assign_Dec_E2:d {:
+                                                String val = n.toString() + d.toString();
+                                                RESULT = val;
+                                                :};
+
+//Asignaciones box word
+nBox_Assign_Word ::= nBox_Assign_Word_E3:w {:RESULT = w;:};
+nBox_Assign_Word_E1 ::=tSentence:s nBox_Assign_Word_E2:w {: 
+                                                    String val = (s.toString().replaceAll("\"", "")) + w.toString();
+                                                    RESULT= val;
+                                                    :}
+                        | tSentence:s {:  
+                                    String val = s.toString().replaceAll("\"", "");
+                                    RESULT= val;
+                                    :};
+nBox_Assign_Word_E2 ::= tComma:c nBox_Assign_Word_E1:w {: 
+                                                String val = c.toString() + w.toString();
+                                                RESULT= val;
+                                                :};
+nBox_Assign_Word_E3 ::=tSentence:s nBox_Assign_Word_E2:w {:
+                                                String val = (s.toString().replaceAll("\"", "")) + w.toString();
+                                                RESULT = val;
+                                                :};
+
+//Asignaciones box symbol;
+nBox_Assign_Sym ::= nBox_Assign_Sym_E3:s {:RESULT = s;:};
+nBox_Assign_Sym_E1 ::=tChar:c nBox_Assign_Sym_E2:s {: 
+                                                    String val = c.toString() + s.toString();
+                                                    RESULT= val;
+                                                    :}
+                        | tChar:c {:  
+                                    String val = c.toString();
+                                    RESULT= val;
+                                    :};
+nBox_Assign_Sym_E2 ::= tComma:c nBox_Assign_Sym_E1:s {: 
+                                                String val = c.toString() + s.toString();
+                                                RESULT= val;
+                                                :};
+nBox_Assign_Sym_E3 ::=tChar:c nBox_Assign_Sym_E2:s {:
+                                                String val = c.toString() + s.toString();
+                                                RESULT = val;
+                                                :};
+
+
+//valores de bool
+nBool_Types ::= tTrue:t {: RESULT=t; :}
+                |tFalse:f {: RESULT=f; :};
+
+//Objetos dentro de los corchetes de box
+nVal_Box ::= tNumberI:n {: RESULT=n; :}
+                |tId:i {: RESULT=i; :};
+//Declaracion de Box
+nBox ::= nBox_E2:b {: RESULT=b; :};
+
+nBox_EB ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Bool:ab tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + ab.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
+nBox_EI ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Int:ai tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + ai.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
+
+nBox_ED ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Dec:ad tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + ad.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
+//por aqui vas cabron
+nBox_ES ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Sym:as tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + as.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
+
+nBox_EW ::= tParOpen:po nVal_Box:v tParClose:pc tEndSentence {:
+                                                    String val = po.toString() + v.toString() + pc.toString();
+                                                    RESULT=val; 
+                                                    :}
+            | tBoxAssing:a tParOpen:po nBox_Assign_Word:aw tParClose:pc tEndSentence {:
+                                                    String val = a.toString() + po.toString() 
+                                                                + aw.toString() + pc.toString();
+                                                    System.out.println(val);
+                                                    RESULT=val; 
+                                                    :};
+
+nBox_E1 ::= tBoolean:b tId:i nBox_EB:be {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + be.toString();
+                                n1.setValue(b.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :}
+            | tInteger:in tId:i nBox_EI:ie {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + ie.toString();
+                                n1.setValue(in.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :} 
+            | tDecimal:d tId:i nBox_ED:de {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + de.toString();
+                                n1.setValue(d.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :} 
+            | tSymbol:s tId:i nBox_ES:se {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + se.toString();
+                                n1.setValue(s.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :} 
+            | tWord:w tId:i nBox_EW:we {:
+                                Node n = new Node("Box_Declaration");
+                                Node n1 = new Node("Box_Type");
+                                Node n2 = new Node("Box_ID");
+                                n1.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                String val = i.toString() + we.toString();
+                                n1.setValue(w.toString());
+                                n2.setValue(val);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)n2);        
+                                RESULT=n; 
+                                :};
+nBox_E2 ::= tBox:b nBox_E1:be {:
+                        Node n = new Node("Declaration");
+                        Node n1 = new Node("Type");
+                        n1.setValue(b.toString());
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node)n1);
+                        n.addChild((Node)be);
+                        RESULT=n; 
+                        :};
+
+//Asignacion de box despues de declarado
+nBox_Assign ::= tNumberI:ni tEndSentence {: RESULT=ni;:}
+                | tTrue:t tEndSentence {: RESULT=t;:}
+                | tChar:c tEndSentence {: RESULT=c;:}
+                | tSentence:s tEndSentence {: 
+                                            String val = s.toString().replaceAll("\"", "");
+                                            RESULT=val; :}
+                | tFalse:f tEndSentence {: RESULT=f;:}
+                | tId:i tEndSentence{: RESULT=i;:}
+                | tNumberD:nd tEndSentence{: RESULT=nd;:};
+//Asignacion de cualquiera tipo
+nAssignation ::= nAssignation_E2:a {: RESULT=a; :};
+nAssignation_E1 ::= tId:i tEndSentence {: RESULT=i;:}
+                    | tNumberI:ni tEndSentence {: RESULT=ni; :}
+                    | tNumberD:nd tEndSentence {: RESULT=nd; :}
+                    | tChar:c tEndSentence {: RESULT=c; :}
+                    | tTrue:t tEndSentence {: RESULT=t; :}
+                    | tFalse:f tEndSentence {: RESULT=f; :}
+                    | tSentence:s tEndSentence {: 
+                                                String val = s.toString().replaceAll("\"", "");
+                                                RESULT= val; :};
+nAssignation_E2 ::= tId:i tAssign:a nAssignation_E1:e {:
+                                        Node n= new Node("Var_Assign");
+                                        Node n1 = new Node("ID");
+                                        n1.setValue(i.toString() + a.toString() + e.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node) n1);
+                                        RESULT=n;
+                                        :}
+                    | tId:i tParOpen:po nVal_Box:v tParClose:pc tAssign:a nBox_Assign:ba {:
+                                        Node n= new Node("Var_Box_Assign");
+                                        Node n1 = new Node("Box_ID");
+                                        n1.setValue(i.toString() + po.toString() 
+                                                    + v.toString()+ pc.toString() 
+                                                    + a.toString() + ba.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node) n1);
+                                        RESULT=n;
+                                        :}
+                    | error {:parser.report_error("Error de asignacion","Error");:} nAssignation_E1
+                    | tId error {:parser.report_error("Error de asignacion","Error");:} nBox_Assign;
+//Operaciones
+
+//Sentencias de operaciones dentro del if y cicle
+nSentences ::= nSentences_E1:s {: RESULT=s; :};
+nSentences_E1 ::=nCompObjects:ob tComparative:c nCompObjects:ob2 {:
+                                                Node n = new Node(c.toString());
+                                                Node n1 = new Node("Val");
+                                                Node n2 = new Node("Val");
+                                                n1.setValue(ob.toString());
+                                                n2.setValue(ob2.toString());
+                                                n2.setNodeNum(parser.counter++);
+                                                n1.setNodeNum(parser.counter++);
+                                                n.setNodeNum(parser.counter++);
+                                                n.addChild((Node) n1);
+                                                n.addChild((Node) n2);
+                                                RESULT = n;
+                                                :};
+
+//Operadores Logicos
+nLogicalOpe ::= tAnd:a {:RESULT=a;:}
+                | tOr:o {:RESULT=o;:};
+//Sentencias usadas en varios lugares
+nCompObjects ::= tId:i {:RESULT=i;:}
+                |tNumberI:ni {:RESULT=ni;:}
+                |tNumberD:nd {:RESULT=nd;:}
+                |tTrue:t {:RESULT=t;:}
+                |tFalse:f {:RESULT=f;:};
+//Sentencias para ejecutar ors y ands divididos por parentesis
+nInsideComp ::= nInsideComp_E1:s {: //System.out.println("saliendo compare ");
+                                                 RESULT = s;:};
+nInsideComp_E1 ::= nSentences:s nLogicalOpe:l nInsideComp_E1:i {:                                                
+                                                //System.out.println("llego a compare 1 ");
+                                                Node n = new Node("Operator_" + l.toString());
+                                                n.setNodeNum(parser.counter++);
+                                                n.addChild((Node) s);
+                                                n.addChild((Node) i);
+                                                RESULT = n;:}
+                    | nSentences:s {: //System.out.println("llego a compare 2 ");
+                                                 RESULT=s;:}; 
+
+nList_DI ::= nIf:i nList_DI_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=i;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) i);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nTypes:t nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=t;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) t);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :} 
+            | nAssignation:a nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=a;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) a);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nFor:f nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=f;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) f);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nCicle:c nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=c;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) c);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nSwap:s nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=s;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) s);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nBox:b nList_DI_Repeat:r {:
+                                        String name = ((Node)r).getName(); 
+                                        if(name.equals("vacio")){
+                                            RESULT=b;      
+                                        }else{
+                                            Node tmp = new Node("List");
+                                            tmp.addChild((Node) b);
+                                            tmp.addChild((Node) r);
+                                            tmp.setNodeNum(parser.counter++);
+                                            RESULT= tmp;
+                                        }
+                                        :}
+            | nCallMethod:c nList_DI_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=c;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) c);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :};
+
+nList_DI_Repeat ::= nList_DI:i {: RESULT=i; :} | {:
+                                                Node tmp = new Node("vacio");
+                                                RESULT= tmp; 
+                                                :};
+//Gramatica de if
+nIf ::= nIf_E2:i {: RESULT=i; :};
+nInside_If ::= tInit nList_DI:l tEnd {:
+                                        
+                                        Node n= new Node("Inside_If");
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node) l);
+                                        //System.out.println("en Inside_if 1");
+                                        RESULT=n;:}
+                |tInit nList_DI:l1 tEnd tElse tInit nList_DI:l2 tEnd{:
+                                                                    
+                                                                    Node n = new Node("Then");
+                                                                    Node nif = new Node("Inside_If");
+                                                                    Node nelse = new Node("Inside_Else");
+                                                                    nif.addChild((Node) l1);
+                                                                    nelse.addChild((Node) l2);
+                                                                    nif.setNodeNum(parser.counter++);
+                                                                    nelse.setNodeNum(parser.counter++);
+                                                                    n.setNodeNum(parser.counter++);
+                                                                    n.addChild((Node) nif);
+                                                                    n.addChild((Node) nelse);
+                                                                    //System.out.println("en Inside_if 2");
+                                                                    RESULT = n; :};
+nIf_E1 ::= tParOpen:po nInsideComp:ic tParClose:pc nInside_If:nif {:
+                                                                    
+                                                                    Node n = new Node("Condition");
+                                                                    n.setNodeNum(parser.counter++);
+                                                                    n.addChild((Node) ic);
+                                                                    n.addChild((Node) nif);
+                                                                    //System.out.println("en condition nif_e1");
+                                                                    RESULT = n; 
+                                                                    :};
+nIf_E2 ::= tIf:nif nIf_E1:i {:
+                            
+                            Node n = new Node("If");
+                            //System.out.println("en condition nif_e2 ");
+                            Node n1 = new Node("Type");
+                            n1.setValue(nif.toString()); 
+                            n1.setNodeNum(parser.counter++);
+                            n.setNodeNum(parser.counter++);
+                            n.addChild((Node) n1);
+                            n.addChild((Node) i);
+
+                            RESULT = n; 
+                            :}
+            | tIf error {:parser.report_error("Error en declaracion de if","Error");:} nIf_E1;
+
+//Sentencias para operaciones dentro del for
+nForSentence ::= nForSentence_E1:f {:RESULT=f;:};
+nForSentence_E1 ::= nForObjectOptions:fo1 tTo nForObjectOptions:fo2 tEndSentence tId:i {:
+                                                                    Node n = new Node("To");
+                                                                    Node n1 = new Node("Val");
+                                                                    Node n2 = new Node("Val");
+                                                                    Node n3 = new Node("ID");
+                                                                    n1.setValue(fo1.toString());
+                                                                    n2.setValue(fo2.toString());
+                                                                    n3.setValue(i.toString());
+                                                                    n1.setNodeNum(parser.counter++);
+                                                                    n2.setNodeNum(parser.counter++);
+                                                                    n3.setNodeNum(parser.counter++);
+                                                                    n.setNodeNum(parser.counter++);
+                                                                    n.addChild((Node) n1);
+                                                                    n.addChild((Node) n2);
+                                                                    n.addChild((Node) n3);
+                                                                    RESULT=n;
+                                                                    :};
+
+//Objetos usados dentro de la operacion del for
+nForObjectOptions ::= tNumberD:nd {:RESULT=nd;:}
+                        |tNumberI:ni {:RESULT=ni;:}
+                        |tId:i {:RESULT=i;:};
+//Gramatica de for
+nFor ::= nFor_E2:f {:RESULT=f;:};
+nInside_For ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_For");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nFor_E1 ::= tParOpen nForSentence:f tParClose nInside_For:nif {:            
+                                                        Node n = new Node("Range");
+                                                        n.setNodeNum(parser.counter++);
+                                                        n.addChild((Node) f);
+                                                        n.addChild((Node) nif);
+                                                        RESULT = n; 
+                                                        :}; 
+nFor_E2 ::= tFor:f nFor_E1:nf{:    
+                        Node n = new Node("For");
+                        Node n1 = new Node("Type");
+                        n1.setValue(f.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) nf);
+                        RESULT = n; 
+                        :}
+            | tFor error {:parser.report_error("Error en declaracion de for","Error");:} nFor_E1;
+
+//Gramatica de cicle
+nCicle ::= nCicle_E3:c {: RESULT = c; :};
+nInside_Cicle ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_Cicle");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nCicle_E2 ::= tParOpen nSentences:s tParClose nInside_Cicle:nic {:            
+                                                        Node n = new Node("Condition");
+                                                        n.setNodeNum(parser.counter++);
+                                                        n.addChild((Node) s);
+                                                        n.addChild((Node) nic);
+                                                        RESULT = n; 
+                                                        :};
+nCicle_E3 ::= tCicle:c nCicle_E2:nc {:    
+                        Node n = new Node("Cicle");
+                        Node n1 = new Node("Type");
+                        n1.setValue(c.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) nc);
+                        RESULT = n; 
+                        :}
+                |tCicle error {:parser.report_error("Error en declaracion de cicle","Error");:} nCicle_E2;
+
+//Objetos usados para is
+nObject_Is ::= tNumberI:ni {: RESULT = ni; :} 
+                | tChar:c {: RESULT = c; :};
+
+//Gramatica de is
+nIs ::= nIs_E2:i {: RESULT = i; :};
+nInside_Is ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_Is");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nIs_E1 ::= tParOpen nObject_Is:o tParClose nInside_Is:ni {:            
+                                                        Node n = new Node("Condition");
+                                                        Node n1 = new Node("Val");
+                                                        n1.setNodeNum(parser.counter++);
+                                                        n.setNodeNum(parser.counter++);
+                                                        n1.setValue(o.toString());
+                                                        n.addChild((Node) n1);
+                                                        n.addChild((Node) ni);
+                                                        RESULT = n; 
+                                                        :};
+nIs_E2 ::= tIs:i nIs_E1:ni {:    
+                        Node n = new Node("Is");
+                        Node n1 = new Node("Type");
+                        n1.setValue(i.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) ni);
+                        RESULT = n; 
+                        :}
+            | tIs error {:parser.report_error("Error en declaracion de is de swap","Error");:} nIs_E1;
+
+//Repeticion de gramatica de is
+nList_Is ::= nIs:i nList_Is_Repeat:r {:
+                                String name = ((Node)r).getName(); 
+                                if(name.equals("vacio")){
+                                    RESULT=i;      
+                                }else{
+                                    Node tmp = new Node("List");
+                                    tmp.addChild((Node) i);
+                                    tmp.addChild((Node) r);
+                                    tmp.setNodeNum(parser.counter++);
+                                    RESULT= tmp;
+                                }
+                                :};
+nList_Is_Repeat ::= nList_Is:i {: RESULT=i; :} | {:
+                                                Node tmp = new Node("vacio");
+                                                RESULT= tmp; 
+                                                :};
+
+//Gramatica de default
+nDefault ::= nDefault_E1:d {: RESULT = d; :};
+nInside_Default ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_Default");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nDefault_E1 ::= tDefault:d nInside_Default:nd {:    
+                        Node n = new Node("Default");
+                        Node n1 = new Node("Type");
+                        n1.setValue(d.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) nd);
+                        RESULT = n; 
+                        :};
+
+//Gramatica de swap
+nSwap ::= nSwap_E2:s {: RESULT = s; :};
+nInside_Swap ::= tInit nList_Is:l nDefault:d tEnd {:
+                                    Node n= new Node("Inside_Swap");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    n.addChild((Node) d);
+                                    RESULT=n;
+                                    :};
+nSwap_E1 ::= tParOpen tId:i tParClose nInside_Swap:ns {:            
+                                                Node n = new Node("Condition");
+                                                Node n1 = new Node("Val");
+                                                n1.setNodeNum(parser.counter++);
+                                                n.setNodeNum(parser.counter++);
+                                                n1.setValue(i.toString());
+                                                n.addChild((Node) n1);
+                                                n.addChild((Node) ns);
+                                                RESULT = n; 
+                                                :}; 
+nSwap_E2 ::= tSwap:s nSwap_E1:ns {:    
+                        Node n = new Node("Swap");
+                        Node n1 = new Node("Type");
+                        n1.setValue(s.toString()); 
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node) n1);
+                        n.addChild((Node) ns);
+                        RESULT = n; 
+                        :}
+            | tSwap error {:parser.report_error("Error en declaracion de swap","Error");:} nSwap_E1;
+
+//Gramatica de tipos para func y parametros
+nVP_Types ::= tInteger:i {:RESULT = i;:}
+                |tBoolean:b {:RESULT = b;:}
+                |tDecimal:d {:RESULT = d;:}
+                |tWord:w {:RESULT = w;:}
+                |tSymbol:s {:RESULT = s;:};
+//Gramatica de parametros
+nParam ::= nParam_E3:p {:RESULT = p;:};
+nParam_E1 ::= tId:i nParam_E2:p {: 
+                                Node n = new Node("Param");
+                                Node n1 = new Node("id");
+                                n1.setValue(i.toString());
+                                n1.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                n.addChild((Node)n1);
+                                n.addChild((Node)p);
+                                RESULT = n;
+                                :} 
+                |tId:i {:
+                        Node n = new Node("Param");
+                        Node n1 = new Node("id");
+                        n1.setValue(i.toString());
+                        n1.setNodeNum(parser.counter++);
+                        n.setNodeNum(parser.counter++);
+                        n.addChild((Node)n1);
+                        RESULT = n ;
+                        :} ;
+nParam_E2 ::= tComma nVP_Types:v nParam_E1:p {:
+                                            Node n = new Node("Param");
+                                            Node n1 = new Node("Type");
+                                            n1.setValue(v.toString());
+                                            n1.setNodeNum(parser.counter++);
+                                            n.setNodeNum(parser.counter++);
+                                            n.addChild((Node)n1);
+                                            n.addChild((Node)p);
+                                            RESULT = n ;
+                                            :}; 
+nParam_E3 ::= nVP_Types:v tId:i nParam_E2:p {:
+                                            Node n = new Node("Param");
+                                            Node n1 = new Node("Type");
+                                            Node n2 = new Node("id");
+                                            n2.setValue(i.toString());
+                                            n2.setNodeNum(parser.counter++);
+                                            n1.setValue(v.toString());
+                                            n1.setNodeNum(parser.counter++);
+                                            n.setNodeNum(parser.counter++);
+                                            n.addChild((Node)n1);
+                                            n.addChild((Node)n2);
+                                            n.addChild((Node)p);
+                                            RESULT = n ;
+                                            :}
+                |nVP_Types:v tId:i {:
+                                    Node n = new Node("Param");
+                                    Node n1 = new Node("Type");
+                                    Node n2 = new Node("id");
+                                    n2.setValue(i.toString());
+                                    n2.setNodeNum(parser.counter++);
+                                    n1.setValue(v.toString());
+                                    n1.setNodeNum(parser.counter++);
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node)n1);
+                                    n.addChild((Node)n2);
+                                    RESULT = n ;
+                                    :};
+
+// Gramatica de lista de objetos que contiene solo func
+nList_Func ::= nIf:i nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=i;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) i);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nTypes:t nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=t;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) t);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nAssignation:a nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=a;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) a);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nFor:f nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=f;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) f);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nCicle:c nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=c;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) c);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nSwap:s nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=s;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) s);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nBox:b nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=b;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) b);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nReturn:t nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=t;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) t);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :}
+            | nCallMethod:c nList_Func_Repeat:r {:
+                                    String name = ((Node)r).getName(); 
+                                    if(name.equals("vacio")){
+                                        RESULT=c;      
+                                    }else{
+                                        Node tmp = new Node("List");
+                                        tmp.addChild((Node) c);
+                                        tmp.addChild((Node) r);
+                                        tmp.setNodeNum(parser.counter++);
+                                        RESULT= tmp;
+                                    } :};
+
+nList_Func_Repeat ::= nList_Func:i {: RESULT=i; :} | {:
+                                                Node tmp = new Node("vacio");
+                                                RESULT= tmp; 
+                                                :};
+
+
+//Gramatica de return
+nReturn ::= tReturn:t nAssignation_E1:a {:
+                                        Node tmp = new Node("Return");
+                                        Node n1 = new Node("Type");
+                                        Node n2 = new Node("Val");
+                                        n1.setValue(t.toString());
+                                        n2.setValue(a.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n2.setNodeNum(parser.counter++);
+                                        tmp.setNodeNum(parser.counter++);
+                                        tmp.addChild((Node) n1);
+                                        tmp.addChild((Node) n2);
+                                        RESULT= tmp;:};
+
+//asignacion de valores por parametro
+nParam_Value ::= tId:i {:RESULT=i;:}
+                |tChar:c {:RESULT=c;:}
+                | tTrue:t {:RESULT=t;:}
+                | tFalse:f {:RESULT=f;:}
+                | tSentence:s {:String val = s.toString().replaceAll("\"", "");
+                                            RESULT=val;:}
+                | tNumberD:nd {:RESULT=nd;:}
+                | tNumberI:ni {:RESULT=ni;:};
+nAssign_Method ::= nAssign_Method_E3:a {:RESULT=a;:};
+nAssign_Method_E1 ::= nParam_Value:v nAssign_Method_E2:a {:
+                                                    Node n = new Node("Param");
+                                                    Node n1 = new Node("Val");
+                                                    n1.setValue(v.toString());
+                                                    n1.setNodeNum(parser.counter++);
+                                                    n.setNodeNum(parser.counter++);
+                                                    n.addChild((Node)n1);
+                                                    n.addChild((Node)a);
+                                                    RESULT=n;
+                                                    :}
+                        | nParam_Value:v {:
+                                        Node n = new Node("Param");
+                                        Node n1 = new Node("Val");
+                                        n1.setValue(v.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node)n1);
+                                        RESULT=n;
+                                        :}; 
+nAssign_Method_E2 ::= tComma nAssign_Method_E1:a {:
+                                                RESULT=a;
+                                                :};
+nAssign_Method_E3 ::= nParam_Value:v nAssign_Method_E2:a {:
+                                                    Node n = new Node("Param");
+                                                    Node n1 = new Node("Val");
+                                                    n1.setValue(v.toString());
+                                                    n1.setNodeNum(parser.counter++);
+                                                    n.setNodeNum(parser.counter++);
+                                                    n.addChild((Node)n1);
+                                                    n.addChild((Node)a);
+                                                    RESULT=n;
+                                                    :}
+                        |nParam_Value:v {:
+                                        Node n = new Node("Param");
+                                        Node n1 = new Node("Val");
+                                        n1.setValue(v.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node)n1);
+                                        RESULT=n;
+                                        :};
+//Llamada de metodo
+nCallMethod ::= nCallMethod_E2:c {:RESULT=c;:};
+nCallMethod_E1 ::= nAssign_Method:a {:RESULT=a;:};
+nCallMethod_E2 ::= tId:i tStapleOpen:so tStapleClose:sc tEndSentence {:Node n = new Node("Method");
+                                        Node n1 = new Node("Id");
+                                        n1.setValue(i.toString() + so.toString() + sc.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node)n1);
+                                        RESULT=n;
+                                        :}
+                    |tId:i tStapleOpen nCallMethod_E1:c tStapleClose tEndSentence {:
+                                        Node n = new Node("Method");
+                                        Node n1 = new Node("Id");
+                                        n1.setValue(i.toString());
+                                        n1.setNodeNum(parser.counter++);
+                                        n.setNodeNum(parser.counter++);
+                                        n.addChild((Node)n1);
+                                        n.addChild((Node)c);
+                                        RESULT=n;
+                                        :}
+                    |tId error {:parser.report_error("Error en llamada de metodos","Error");:} tEndSentence
+                    |tId tStapleOpen error {:parser.report_error("Error en llamada de metodos","Error");:} nCallMethod_E1 tStapleClose tEndSentence;
+
+//Gramatica func
+nFunc ::= nFunc_E2:f {:RESULT=f;:};
+nInside_Func ::= tInit nList_Func:l tEnd{:
+                                    Node n= new Node("Inside_Func");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nFunc_E1 ::= tParOpen nParam:p tParClose nInside_Func:f {:            
+                                                    Node n = new Node("Parameters");
+                                                    n.setNodeNum(parser.counter++);
+                                                    n.addChild((Node) p);
+                                                    n.addChild((Node) f);
+                                                    RESULT = n; 
+                                                    :};
+nFunc_E2 ::= tFunction:f nVP_Types:v tId:i nFunc_E1:e {:            
+                                Node n = new Node("Func");
+                                Node n1 = new Node("Type");
+                                Node n2 = new Node("id_Type");
+                                Node n3 = new Node("id");
+                                n3.setNodeNum(parser.counter++);
+                                n2.setNodeNum(parser.counter++);
+                                n1.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                n1.setValue(f.toString());
+                                n2.setValue(v.toString());
+                                n3.setValue(i.toString());
+                                n.addChild((Node) n1);
+                                n.addChild((Node) n2);
+                                n.addChild((Node) n3);
+                                n.addChild((Node) e);
+                                RESULT = n; 
+                                :}
+                |tFunction {:parser.report_error("Error declaracion de funcion","Error");:} nFunc_E1;
+
+//Gramatica void
+nVoid ::= nVoid_E2:v {:RESULT=v;:};
+nInside_Void ::= tInit nList_DI:l tEnd {:
+                                    Node n= new Node("Inside_Void");
+                                    n.setNodeNum(parser.counter++);
+                                    n.addChild((Node) l);
+                                    RESULT=n;
+                                    :};
+nVoid_E1 ::= tParOpen nParam:p tParClose nInside_Void:v {:            
+                                                    Node n = new Node("Parameters");
+                                                    n.setNodeNum(parser.counter++);
+                                                    n.addChild((Node) p);
+                                                    n.addChild((Node) v);
+                                                    RESULT = n; 
+                                                    :};
+nVoid_E2 ::= tVoid:v tId:i nVoid_E1:e {:            
+                                Node n = new Node("Void");
+                                Node n1 = new Node("Type");
+                                Node n2 = new Node("id");
+                                n2.setNodeNum(parser.counter++);
+                                n1.setNodeNum(parser.counter++);
+                                n.setNodeNum(parser.counter++);
+                                n1.setValue(v.toString());
+                                n2.setValue(i.toString());
+                                n.addChild((Node) n1);
+                                n.addChild((Node) n2);
+                                n.addChild((Node) e);
+                                RESULT = n; 
+                                :}
+            | tVoid {:parser.report_error("Error declaracion de funcion void","Error");:} nVoid_E1;
+

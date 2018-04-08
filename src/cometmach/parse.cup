@@ -20,7 +20,7 @@ parser code
 
 terminal tTrue, tFalse, tIf, tAssign, tOr, tAnd, tComparative, tElseif, tElse, tSwap, tIs;
 terminal tThen, tClose, tDefault, tFor, tParOpen, tParClose, tTo, tEnd, tMain;
-terminal tCicle, tBox, tBoxAssing, tFunction, tVoid, tReturn, tCommentary;
+terminal tCicle, tBox, tBoxAssing, tFunction, tVoid, tReturn;
 terminal tInit, tInteger, tDecimal, tWord,  tSymbol, tBoolean;
 terminal tId, tStapleOpen, tStapleClose, tComma, tAdd, tSub, tMulti, tDiv, tEndSentence;
 terminal String tSentence, tNumberI, tNumberD, tChar;
@@ -64,7 +64,6 @@ non terminal nParam, nParam_E1, nParam_E2, nParam_E3, nVP_Types;
 non terminal nCallMethod, nCallMethod_E1, nCallMethod_E2; 
 non terminal nAssign_Method, nAssign_Method_E1, nAssign_Method_E2, nAssign_Method_E3;
 non terminal nParam_Value;
-non terminal nCommetary;
 non terminal nCometMach;
 non terminal nId, nIds, nId_E1, nId_E2;
 precedence left tAdd, tSub;
@@ -196,9 +195,7 @@ nInside ::= nTypes:t nInside_Repeat:r  {:
                                         tmp.addChild((Node) r);
                                         tmp.setNodeNum(parser.counter++);
                                         RESULT= tmp;
-                                    } :}    
-            | nCommetary nInside_Repeat
-            ;
+                                    } :};
 
 nInside_Repeat ::= nInside:i {: RESULT=i; :} | {:
                                             Node tmp = new Node("vacio");
@@ -233,20 +230,7 @@ nOutside ::= nFunc:f nOutside_Repeat:r {:
                                             tmp.setNodeNum(parser.counter++);
                                             RESULT= tmp;
                                         }
-                                        :}
-            |nCommetary:c nOutside_Repeat:r {:
-                                        String name = ((Node)r).getName(); 
-                                        if(name.equals("vacio")){
-                                            RESULT=c;      
-                                        }else{
-                                            Node tmp = new Node("Inside");
-                                            tmp.addChild((Node) c);
-                                            tmp.addChild((Node) r);
-                                            tmp.setNodeNum(parser.counter++);
-                                            RESULT= tmp;
-                                        }
-                                        :}; 
-
+                                        :};
 nOutside_Repeat ::= nOutside:o {: RESULT=o; :} | {:
                                                 Node tmp = new Node("vacio");
                                                 RESULT= tmp; 
@@ -257,11 +241,6 @@ nTypes ::= nInt:i {: RESULT=i; :}
             | nWord:w {: RESULT=w; :}  
             | nSym:s {: RESULT=s; :} 
             | nBool:b {: RESULT=b; :};
-
-nCommetary ::= tCommentary:t {:Node n = new Node("Comentario");
-                                //n.setValue(t.toString());
-                                n.setNodeNum(parser.counter++);
-                                RESULT=n;:};
 
 nInt ::= nInt_Decl:i {: RESULT=i; :};
 nDec ::= nDec_Decl:d {: RESULT=d; :};
@@ -803,19 +782,7 @@ nList_DI ::= nIf:i nList_DI_Repeat:r {:
                                         tmp.addChild((Node) r);
                                         tmp.setNodeNum(parser.counter++);
                                         RESULT= tmp;
-                                    } :}
-            | nCommetary:c nList_DI_Repeat:r {:
-                                        String name = ((Node)r).getName(); 
-                                        if(name.equals("vacio")){
-                                            RESULT=c;      
-                                        }else{
-                                            Node tmp = new Node("Inside");
-                                            tmp.addChild((Node) c);
-                                            tmp.addChild((Node) r);
-                                            tmp.setNodeNum(parser.counter++);
-                                            RESULT= tmp;
-                                        }
-                                        :};
+                                    } :};
 
 nList_DI_Repeat ::= nList_DI:i {: RESULT=i; :} | {:
                                                 Node tmp = new Node("vacio");
@@ -1212,19 +1179,7 @@ nList_Func ::= nIf:i nList_Func_Repeat:r {:
                                         tmp.addChild((Node) r);
                                         tmp.setNodeNum(parser.counter++);
                                         RESULT= tmp;
-                                    } :}
-            | nCommetary:c nList_Func_Repeat:r {:
-                                        String name = ((Node)r).getName(); 
-                                        if(name.equals("vacio")){
-                                            RESULT=c;      
-                                        }else{
-                                            Node tmp = new Node("Inside");
-                                            tmp.addChild((Node) c);
-                                            tmp.addChild((Node) r);
-                                            tmp.setNodeNum(parser.counter++);
-                                            RESULT= tmp;
-                                        }
-                                        :};
+                                    } :};
 
 nList_Func_Repeat ::= nList_Func:i {: RESULT=i; :} | {:
                                                 Node tmp = new Node("vacio");
